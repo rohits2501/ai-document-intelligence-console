@@ -3,7 +3,7 @@
 A document intelligence job console for operators: drop a document, watch a long running processing job stream its progress, then review, edit, and approve the extracted fields on the page. Built as a Staff Frontend portfolio piece around real time streaming, long running jobs, large documents, and human review.
 
 **Build approach:** Tracer Bullet (prove one thin real thread through every layer first, then thicken each segment).
-**Workflow:** Alpha (after `/develop`, run `/check verify`). Three features carry a `· Beta` tag (Stack & architecture, Core job loop, Durable job store) so they also get `/test`, because the job machine and the store that holds it must stay locked by tests. `/check review` and `/document` run once at the end.
+**Workflow:** Alpha (after `/develop`, run `/check verify`). Four features carry a `· Beta` tag (Stack & architecture, Core job loop, Durable job store, Exported observability) so they also get `/test`, because the job machine, the store that holds it, and the export contract must stay locked by tests. `/check review` and `/document` run once at the end.
 
 _These are recommendations to keep your build orderly, not requirements. Skip anything that does not fit: if you already know how to build a feature, use `/develop` and skip `/architect`. You decide when a feature is `done`._
 
@@ -24,8 +24,10 @@ _These are recommendations to keep your build orderly, not requirements. Skip an
 | 11 | Reliability & release | Slice 7 | done |
 | 12 | Real extraction provider + media stretch | Deferred | done (provider) |
 | 13 | Durable job store | Slice 8 | planned |
-| 14 | Operator job queue | Slice 9 | planned |
-| 15 | Extract schema on upload | Slice 10 | planned |
+| 16 | Measured performance | Slice 9 | planned |
+| 17 | Exported observability | Slice 10 | planned |
+| 14 | Operator job queue | Slice 11 | planned |
+| 15 | Extract schema on upload | Slice 12 | planned |
 
 ## Foundations
 
@@ -130,18 +132,32 @@ Code in `src/flags/`, `.github/workflows/ci.yml`
 ## Slice 8: Durable job store
 
 ### 13. Durable job store · planned · needs a decision · Beta
-Jobs, events, and reviews survive a process restart, so the event log is actually durable and the unbounded in memory store finding from review 0001 is closed.
-**Done when:** after a restart, an operator can open a prior job, replay its events from Last-Event-ID, and keep reviewing without losing edits.
+Jobs, events, and reviews survive a process restart, so the event log is actually durable and the unbounded in memory store finding from review 0001 is closed. Stream reliability (reconnect, cancel, replay after a refresh) is proven here, not as its own feature. (basis: a test suite is not a product feature)
+**Done when:** after a restart, an operator can open a prior job, replay its events from Last-Event-ID, keep reviewing without losing edits, and a reconnect or cancel still lands on the same truth.
 - [ ] Design it (spec): `/architect durable job store`
 
-## Slice 9: Operator job queue
+## Slice 9: Measured performance
+
+### 16. Measured performance · planned · needs a decision
+Written budgets for loading, rendering, and size, plus a many page document that stays usable on the console. This thickens the viewer you already have. It does not reopen the done Observability & performance row. (basis: a performance budget is a load bearing decision)
+**Done when:** written budgets exist, and a many page document stays usable on the job console against those numbers.
+- [ ] Design it (spec): `/architect measured performance`
+
+## Slice 10: Exported observability
+
+### 17. Exported observability · planned · needs a decision · Beta
+Errors and timed spans you can query after a failed job, plus one page health number. Local logs and the Diagnostics panel stay. The missing story is something you can query after the page is gone. (basis: where errors and spans go is a provider choice; the export contract is easy to break)
+**Done when:** after a failed job you can query the error and the timed spans by correlation id, and the console reports one page health number.
+- [ ] Design it (spec): `/architect exported observability`
+
+## Slice 11: Operator job queue
 
 ### 14. Operator job queue · planned
 The home list shows document names and status filters, and updates as jobs move, so an operator can find work without a raw id list that polls every few seconds.
 **Done when:** an operator can filter jobs by status, see the document name, and watch the list update as jobs progress.
 - [ ] Build it: `/develop operator job queue`
 
-## Slice 10: Extract schema on upload
+## Slice 12: Extract schema on upload
 
 ### 15. Extract schema on upload · planned · needs a decision
 The operator picks or pastes an extract schema when creating a job, so extract is not a fixed fixture list.
@@ -172,3 +188,19 @@ Code in `src/extraction/sarvam-provider.ts`
 - **Workflow tier tag** beside a heading (e.g. `· Beta`) sets that one feature's rigor above the project default (Alpha).
 - **Workflow** (header line): the project default that runs after `/develop`. Alpha = `/check verify`; Beta = `/check verify` then `/test`.
 - **Pointer line** (`spec <n> · code in <path>`): the spec link added by `/architect`, the code path by `/develop`.
+
+## References
+
+### Project sources
+- Root `AGENTS.md`: event log as source of truth, telemetry seam, do not claim production media experience.
+- Spec [0001](../specs/0001-stack-and-architecture.md): in memory store behind an interface, telemetry without a mandatory collector.
+- Review [0001](../reviews/0001-senior-review.md): unbounded in memory stores called out as a demo limit.
+- This `/scope` pass: interview pass is durable store, measured performance, exported observability. Auth stays deferred. Stream checks fold into the store. Extract schema stays planned. Media stays deferred.
+
+### Practices & standards
+- Tracer Bullet: thicken one segment of a working thread, still end to end.
+- Foundations before features (already shipped here).
+- A test suite is not a product feature. `/test` owns the tests.
+- Name capabilities, never the implementing tool.
+- A performance budget is a load bearing decision.
+- A provider or destination choice needs a spec.
