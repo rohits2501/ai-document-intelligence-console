@@ -94,7 +94,8 @@ Next.js 14 (App Router), React 18, TypeScript (strict), SSE via native `EventSou
 ## Notes & honest limits
 
 - Storage and the event log are **in-memory / local disk** for the demo (swappable behind
-  interfaces — see spec 0002 AC-9). Not a production object store.
+  interfaces — see spec 0002 AC-9). Not a production object store. Locally, files live under
+  `.data/uploads/`. On Vercel the app filesystem is read-only, so uploads go to `/tmp`.
 - The default provider is a **mock**; extraction values are illustrative fixtures.
 - No auth/accounts (single-operator demo).
 

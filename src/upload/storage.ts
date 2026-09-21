@@ -1,25 +1,33 @@
-import { mkdir, writeFile, appendFile, readFile, stat } from "node:fs/promises";
+import { mkdir, writeFile, appendFile, readFile, stat, unlink } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 
 /**
- * Local disk storage for the demo (spec 0001: no external services). Not a production object store;
- * the README says so. Files live under `.data/uploads/` and are gitignored.
+ * Local disk storage for the demo (spec 0001: no external services). Not a production object store.
+ *
+ * On a long-lived Node process, files live under `.data/uploads/`.
+ * On Vercel the app directory is read-only, so we write to `/tmp` instead — that is what made
+ * the first chunk return 500 (`EACCES`/`EROFS` from mkdir/append under cwd).
  */
-const ROOT = path.join(process.cwd(), ".data", "uploads");
+export function storageRoot(): string {
+  if (process.env.VERCEL) return path.join("/tmp", "doc-intel-uploads");
+  return path.join(process.cwd(), ".data", "uploads");
+}
 
 async function ensureRoot() {
-  if (!existsSync(ROOT)) await mkdir(ROOT, { recursive: true });
+  const root = storageRoot();
+  if (!existsSync(root)) await mkdir(root, { recursive: true });
 }
 
 /**
  * Resolve a storage key to an absolute path and refuse anything that escapes ROOT. Defense in depth:
  * even if a caller passes an attacker-influenced key, path traversal (`../`, absolute segments)
- * cannot read or write outside `.data/uploads`.
+ * cannot read or write outside the upload root.
  */
 function resolveWithin(storageKey: string): string {
-  const resolved = path.resolve(ROOT, storageKey);
-  if (resolved !== ROOT && !resolved.startsWith(ROOT + path.sep)) {
+  const root = storageRoot();
+  const resolved = path.resolve(root, storageKey);
+  if (resolved !== root && !resolved.startsWith(root + path.sep)) {
     throw new Error("invalid storage key");
   }
   return resolved;
@@ -50,4 +58,26 @@ export async function readWhole(storageKey: string): Promise<Buffer> {
 
 export function storagePath(storageKey: string): string {
   return resolveWithin(storageKey);
+}
+
+export async function writeJson(storageKey: string, value: unknown): Promise<void> {
+  await ensureRoot();
+  await writeFile(resolveWithin(storageKey), JSON.stringify(value), "utf8");
+}
+
+export async function readJson<T>(storageKey: string): Promise<T | null> {
+  try {
+    const raw = await readFile(resolveWithin(storageKey), "utf8");
+    return JSON.parse(raw) as T;
+  } catch {
+    return null;
+  }
+}
+
+export async function removeKey(storageKey: string): Promise<void> {
+  try {
+    await unlink(resolveWithin(storageKey));
+  } catch {
+    // already gone
+  }
 }

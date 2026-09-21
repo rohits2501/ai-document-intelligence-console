@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { uploads, withUploadLock } from "@/upload/uploads-store";
+import { getSession, withUploadLock } from "@/upload/uploads-store";
 import { appendChunk, currentSize } from "@/upload/storage";
+import { log } from "@/telemetry";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -17,7 +18,7 @@ export async function PUT(req: NextRequest) {
   if (!uploadId || offsetParam === null) {
     return NextResponse.json({ error: "uploadId and offset required" }, { status: 400 });
   }
-  const session = uploads.get(uploadId);
+  const session = await getSession(uploadId);
   if (!session) {
     return NextResponse.json({ error: "unknown uploadId" }, { status: 404 });
   }
@@ -25,23 +26,35 @@ export async function PUT(req: NextRequest) {
   const offset = Number.parseInt(offsetParam, 10);
   const buf = Buffer.from(await req.arrayBuffer());
 
-  return withUploadLock(uploadId, async () => {
-    const committed = await currentSize(session.storageKey);
-    if (offset !== committed) {
-      // idempotent resume: tell the client where we actually are
-      return NextResponse.json({ error: "offset mismatch", expected: committed }, { status: 409 });
-    }
-    await appendChunk(session.storageKey, buf);
-    const received = await currentSize(session.storageKey);
-    return NextResponse.json({ received });
-  });
+  try {
+    return await withUploadLock(uploadId, async () => {
+      const committed = await currentSize(session.storageKey);
+      if (offset !== committed) {
+        // idempotent resume: tell the client where we actually are
+        return NextResponse.json({ error: "offset mismatch", expected: committed }, { status: 409 });
+      }
+      await appendChunk(session.storageKey, buf);
+      const received = await currentSize(session.storageKey);
+      return NextResponse.json({ received });
+    });
+  } catch (err) {
+    log.error("upload:chunk", {
+      error: err instanceof Error ? err.message : String(err),
+      uploadId,
+      offset,
+    });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "chunk write failed" },
+      { status: 500 },
+    );
+  }
 }
 
 /** Query how many bytes are committed, so a client can resume after a reload. */
 export async function GET(req: NextRequest) {
   const uploadId = req.nextUrl.searchParams.get("uploadId");
   if (!uploadId) return NextResponse.json({ error: "uploadId required" }, { status: 400 });
-  const session = uploads.get(uploadId);
+  const session = await getSession(uploadId);
   if (!session) return NextResponse.json({ error: "unknown uploadId" }, { status: 404 });
   const offset = await currentSize(session.storageKey);
   return NextResponse.json({ offset, size: session.size });

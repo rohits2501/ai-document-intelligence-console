@@ -1,8 +1,16 @@
+import { readJson, removeKey, writeJson } from "./storage";
+
 /**
  * In-memory registry of in-flight chunked uploads (demo only). Maps an uploadId to its target
  * storage key and expected size, so chunks append to the right file and `complete` can validate.
  * Stashed on globalThis to survive Next dev hot reloads.
+ *
+ * Sessions are also written next to the upload bytes so a later serverless invocation (Vercel
+ * often runs `/api/upload/chunk` in a different isolate than `/init`) can still find them.
  */
+function sessionKey(uploadId: string): string {
+  return `.session.${uploadId}.json`;
+}
 export interface UploadSession {
   uploadId: string;
   storageKey: string;
@@ -18,6 +26,28 @@ const globalForUploads = globalThis as unknown as {
 
 export const uploads: Map<string, UploadSession> =
   globalForUploads.__docIntelUploads ?? (globalForUploads.__docIntelUploads = new Map());
+
+export async function getSession(uploadId: string): Promise<UploadSession | undefined> {
+  const mem = uploads.get(uploadId);
+  if (mem) return mem;
+  const disk = await readJson<UploadSession>(sessionKey(uploadId));
+  if (disk?.uploadId === uploadId) {
+    uploads.set(uploadId, disk);
+    return disk;
+  }
+  return undefined;
+}
+
+export async function saveSession(session: UploadSession): Promise<void> {
+  uploads.set(session.uploadId, session);
+  await writeJson(sessionKey(session.uploadId), session);
+}
+
+export async function deleteSession(uploadId: string): Promise<void> {
+  uploads.delete(uploadId);
+  locks.delete(uploadId);
+  await removeKey(sessionKey(uploadId));
+}
 
 const locks: Map<string, Promise<unknown>> = globalForUploads.__docIntelUploadLocks ??
 (globalForUploads.__docIntelUploadLocks = new Map());

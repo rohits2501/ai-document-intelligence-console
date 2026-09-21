@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { uploads } from "@/upload/uploads-store";
+import { deleteSession, getSession } from "@/upload/uploads-store";
 import { currentSize } from "@/upload/storage";
 import { runtime as store } from "@/jobs/runtime";
 import { DocumentRecord } from "@/jobs/types";
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
-  const session = uploads.get(parsed.data.uploadId);
+  const session = await getSession(parsed.data.uploadId);
   if (!session) return NextResponse.json({ error: "unknown uploadId" }, { status: 404 });
 
   const committed = await currentSize(session.storageKey);
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     createdAt: new Date().toISOString(),
   });
   store.documents.put(doc);
-  uploads.delete(session.uploadId);
+  await deleteSession(session.uploadId);
   log.info("upload:complete-chunked", { document_id: id });
   return NextResponse.json({ document: doc }, { status: 201 });
 }

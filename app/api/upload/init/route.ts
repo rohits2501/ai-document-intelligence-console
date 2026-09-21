@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { uploads, pruneStaleUploads } from "@/upload/uploads-store";
+import { getSession, pruneStaleUploads, saveSession } from "@/upload/uploads-store";
 import { currentSize } from "@/upload/storage";
 import { log, newRequestId } from "@/telemetry";
 
@@ -27,11 +27,11 @@ export async function POST(req: NextRequest) {
   }
 
   const uploadId = parsed.data.uploadId ?? `up_${crypto.randomUUID()}`;
-  const existing = uploads.get(uploadId);
+  const existing = await getSession(uploadId);
   const storageKey = existing?.storageKey ?? `${uploadId}__${sanitize(parsed.data.name)}`;
 
   if (!existing) {
-    uploads.set(uploadId, {
+    await saveSession({
       uploadId,
       storageKey,
       name: parsed.data.name,
