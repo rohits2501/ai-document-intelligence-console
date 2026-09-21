@@ -32,27 +32,13 @@ export function ReviewList({
 }) {
   const [rows, setRows] = useState<RowState[]>([]);
   const [saved, setSaved] = useState<string | null>(null);
+  const [savedFields, setSavedFields] = useState<Map<string, { value: string; approved: boolean }>>(
+    new Map(),
+  );
   const [busy, setBusy] = useState(false);
 
-  // Seed rows from incoming fields, preserving any edits the operator already made.
-  useEffect(() => {
-    setRows((prev) => {
-      const byKey = new Map(prev.map((r) => [r.key, r]));
-      return fields.map((f) => {
-        const existing = byKey.get(f.key);
-        return (
-          existing ?? {
-            key: f.key,
-            value: f.value,
-            confidence: f.confidence,
-            approved: f.confidence >= CONFIDENCE_THRESHOLD,
-          }
-        );
-      });
-    });
-  }, [fields]);
-
-  // Restore a previously submitted review.
+  // Fetch any previously submitted review once. Kept in state (not applied directly to rows) so it
+  // merges deterministically regardless of whether it arrives before or after the streamed fields.
   useEffect(() => {
     let active = true;
     fetch(`/api/jobs/${jobId}/review`)
@@ -60,11 +46,13 @@ export function ReviewList({
       .then((data) => {
         if (!active || !data?.review) return;
         setSaved(data.review.submittedAt);
-        setRows((prev) =>
-          prev.map((r) => {
-            const found = data.review.fields.find((x: RowState) => x.key === r.key);
-            return found ? { ...r, value: found.value, approved: found.approved } : r;
-          }),
+        setSavedFields(
+          new Map(
+            (data.review.fields as RowState[]).map((f) => [
+              f.key,
+              { value: f.value, approved: f.approved },
+            ]),
+          ),
         );
       })
       .catch(() => {});
@@ -72,6 +60,24 @@ export function ReviewList({
       active = false;
     };
   }, [jobId]);
+
+  // Derive rows from incoming fields, preserving live edits, then falling back to a saved review.
+  useEffect(() => {
+    setRows((prev) => {
+      const byKey = new Map(prev.map((r) => [r.key, r]));
+      return fields.map((f) => {
+        const existing = byKey.get(f.key);
+        if (existing) return existing; // keep in-progress edits
+        const savedRow = savedFields.get(f.key);
+        return {
+          key: f.key,
+          value: savedRow?.value ?? f.value,
+          confidence: f.confidence,
+          approved: savedRow?.approved ?? f.confidence >= CONFIDENCE_THRESHOLD,
+        };
+      });
+    });
+  }, [fields, savedFields]);
 
   const approvedCount = useMemo(() => rows.filter((r) => r.approved).length, [rows]);
 
@@ -117,7 +123,17 @@ export function ReviewList({
           return (
             <div
               key={r.key}
+              role="button"
+              tabIndex={0}
+              aria-pressed={isSelected}
+              aria-label={`Review ${r.key}, ${Math.round(r.confidence * 100)} percent confidence`}
               onClick={() => onSelect(r.key)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onSelect(r.key);
+                }
+              }}
               style={{
                 display: "grid",
                 gridTemplateColumns: "1fr auto",

@@ -12,19 +12,32 @@ async function ensureRoot() {
   if (!existsSync(ROOT)) await mkdir(ROOT, { recursive: true });
 }
 
+/**
+ * Resolve a storage key to an absolute path and refuse anything that escapes ROOT. Defense in depth:
+ * even if a caller passes an attacker-influenced key, path traversal (`../`, absolute segments)
+ * cannot read or write outside `.data/uploads`.
+ */
+function resolveWithin(storageKey: string): string {
+  const resolved = path.resolve(ROOT, storageKey);
+  if (resolved !== ROOT && !resolved.startsWith(ROOT + path.sep)) {
+    throw new Error("invalid storage key");
+  }
+  return resolved;
+}
+
 export async function writeWhole(storageKey: string, bytes: Buffer): Promise<void> {
   await ensureRoot();
-  await writeFile(path.join(ROOT, storageKey), bytes);
+  await writeFile(resolveWithin(storageKey), bytes);
 }
 
 export async function appendChunk(storageKey: string, bytes: Buffer): Promise<void> {
   await ensureRoot();
-  await appendFile(path.join(ROOT, storageKey), bytes);
+  await appendFile(resolveWithin(storageKey), bytes);
 }
 
 export async function currentSize(storageKey: string): Promise<number> {
   try {
-    const s = await stat(path.join(ROOT, storageKey));
+    const s = await stat(resolveWithin(storageKey));
     return s.size;
   } catch {
     return 0;
@@ -32,9 +45,9 @@ export async function currentSize(storageKey: string): Promise<number> {
 }
 
 export async function readWhole(storageKey: string): Promise<Buffer> {
-  return readFile(path.join(ROOT, storageKey));
+  return readFile(resolveWithin(storageKey));
 }
 
 export function storagePath(storageKey: string): string {
-  return path.join(ROOT, storageKey);
+  return resolveWithin(storageKey);
 }

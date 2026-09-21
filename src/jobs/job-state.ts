@@ -45,7 +45,17 @@ export function jobReducer(state: JobViewState, event: JobEvent): JobViewState {
 
   switch (event.type) {
     case "queued":
-      return { ...base, status: "queued" };
+      // A queued event marks a (re)start: reset run-derived state so a retry does not show the
+      // previous run's progress/fields while the new run streams in.
+      return {
+        ...base,
+        status: "queued",
+        pagesProcessed: 0,
+        totalPages: null,
+        fields: [],
+        failedKeys: [],
+        error: null,
+      };
     case "processing":
     case "extraction_started":
       return { ...base, status: "processing" };

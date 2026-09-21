@@ -69,6 +69,26 @@ describe("jobReducer", () => {
     expect(state.failedKeys).toEqual(["gstin", "total_amount"]);
   });
 
+  it("resets run-derived state on a re-queued event (retry boundary)", () => {
+    seq = 0;
+    const state = reduce([
+      ev("page_processed", { page: 2, totalPages: 4 }),
+      ev("partial_result", {
+        fields: [{ key: "a", value: "1", confidence: 0.9, page: 1, bbox: null, source: null }],
+      }),
+      ev("partially_completed", { failed: ["b"] }),
+      ev("queued", { message: "retry" }), // retry boundary
+    ]);
+    expect(state.status).toBe("queued");
+    expect(state.pagesProcessed).toBe(0);
+    expect(state.totalPages).toBeNull();
+    expect(state.fields).toHaveLength(0);
+    expect(state.failedKeys).toHaveLength(0);
+    expect(state.error).toBeNull();
+    // history is preserved even though derived state reset
+    expect(state.events.length).toBe(4);
+  });
+
   it("surfaces cancellation as a terminal failure", () => {
     seq = 0;
     const state = reduce([ev("processing"), ev("cancelled")]);

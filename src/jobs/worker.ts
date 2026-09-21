@@ -71,7 +71,14 @@ export async function runJob(
       }
     });
   } catch (err) {
-    if (err instanceof ProviderAbortError) {
+    // A cancel aborts the shared signal; providers surface that as ProviderAbortError (mock) or a
+    // DOMException "AbortError" (real fetch-based provider). Treat all of these as cancellation, not
+    // a generic failure, so cancel semantics/status stay accurate.
+    const aborted =
+      err instanceof ProviderAbortError ||
+      (err instanceof DOMException && err.name === "AbortError") ||
+      controller.signal.aborted;
+    if (aborted) {
       appendEvent(deps, jobId, "cancelled", { message: "cancelled by operator" });
       log.warn("job:cancelled", { job_id: jobId, document_id: doc.id });
     } else {

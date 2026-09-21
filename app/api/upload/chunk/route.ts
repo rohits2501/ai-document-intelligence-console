@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { uploads } from "@/upload/uploads-store";
+import { uploads, withUploadLock } from "@/upload/uploads-store";
 import { appendChunk, currentSize } from "@/upload/storage";
 
 export const runtime = "nodejs";
@@ -8,7 +8,8 @@ export const dynamic = "force-dynamic";
 /**
  * Append one chunk at a given offset. The client sends chunks sequentially; the server only accepts
  * a chunk whose offset matches the current committed size, so a duplicate or out-of-order retry is
- * rejected with the authoritative offset for the client to resume from.
+ * rejected with the authoritative offset for the client to resume from. The offset check + append
+ * run under a per-upload lock so concurrent PUTs cannot both commit at the same offset.
  */
 export async function PUT(req: NextRequest) {
   const uploadId = req.nextUrl.searchParams.get("uploadId");
@@ -22,16 +23,18 @@ export async function PUT(req: NextRequest) {
   }
 
   const offset = Number.parseInt(offsetParam, 10);
-  const committed = await currentSize(session.storageKey);
-  if (offset !== committed) {
-    // idempotent resume: tell the client where we actually are
-    return NextResponse.json({ error: "offset mismatch", expected: committed }, { status: 409 });
-  }
-
   const buf = Buffer.from(await req.arrayBuffer());
-  await appendChunk(session.storageKey, buf);
-  const received = await currentSize(session.storageKey);
-  return NextResponse.json({ received });
+
+  return withUploadLock(uploadId, async () => {
+    const committed = await currentSize(session.storageKey);
+    if (offset !== committed) {
+      // idempotent resume: tell the client where we actually are
+      return NextResponse.json({ error: "offset mismatch", expected: committed }, { status: 409 });
+    }
+    await appendChunk(session.storageKey, buf);
+    const received = await currentSize(session.storageKey);
+    return NextResponse.json({ received });
+  });
 }
 
 /** Query how many bytes are committed, so a client can resume after a reload. */

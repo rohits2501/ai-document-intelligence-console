@@ -161,6 +161,8 @@ function Overlay({
           <button
             key={f.key}
             title={`${f.key} · ${Math.round(f.confidence * 100)}%`}
+            aria-label={`${f.key}, ${Math.round(f.confidence * 100)} percent confidence`}
+            aria-pressed={selected}
             onClick={() => onSelectField(f.key)}
             style={{
               position: "absolute",

@@ -31,8 +31,24 @@ Initial build of the AI Document Intelligence Console.
 - **Real Sarvam Doc AI provider** (stretch, spec 0004): bridges the poll-based job API onto the
   push/event model behind the same interface; mock stays the default.
 
+### Security
+
+- **Path traversal (blocker, found in senior review):** a client-supplied `uploadId` could shape the
+  storage path and escape `.data/uploads`. `uploadId` is now validated to a fixed token shape and
+  storage resolves every key strictly within the upload root.
+
 ### Fixed
 
+- **Chunk upload race:** concurrent chunk PUTs at the same offset could corrupt a file; appends are
+  now serialized per upload session.
+- **Cancel classification:** aborts from a `fetch`-based provider are now recorded as `cancelled`,
+  not `failed`.
+- **Retry:** restricted to failed/partial/rejected, appends a fresh `queued` event, and resets
+  client run state so a retry no longer shows the prior run's fields/progress.
+- **Review restore:** a saved review now hydrates deterministically regardless of whether it arrives
+  before or after streamed fields.
+- **Cancel endpoint** returns `409` (with a reason) for non-cancellable states; overlay/review
+  controls gained keyboard semantics and ARIA labels; upload sessions expire after 1h.
 - SSE terminal-replay crash: a temporal-dead-zone reference in the ReadableStream `start` handler
   meant reconnecting to an already-terminal job returned an empty stream. Cleanup bindings are now
   hoisted; replay-then-subscribe is race-free (single-threaded append), and reconnecting to a
