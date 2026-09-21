@@ -147,13 +147,15 @@ Cardinality: one document has many jobs; one job has many events and at most one
 
 Ordered as a Tracer Bullet: prove the event log end to end through SQLite first (the load bearing store for the streaming story), then thicken with the other three stores.
 
-1. Add `better-sqlite3`, a `src/jobs/db.ts` that opens `<DATA_DIR>/doc-intel.db` (reusing the `storage.ts` data root resolver), applies the WAL pragmas, and fails loud on a corrupt or unopenable file, satisfies **AC-7**, **AC-8**.
-2. Create the one migration for the confirmed schema (`documents`, `jobs`, `job_events`, `reviews`) run on first open, satisfies **AC-1**.
-3. Implement `SqliteEventLog` behind `EventLogStore`: transactional append computing `COALESCE(MAX(id),0)+1` per job, `since()` as an indexed range scan, and an in process listener set that fires after the write, satisfies **AC-2**, **AC-3**.
-4. Implement `SqliteJobStore` and `SqliteDocumentStore` behind their interfaces, satisfies **AC-1**.
-5. Introduce a `ReviewStore` interface and a `SqliteReviewStore`, and move the raw `reviews` Map in `runtime.ts` behind it, satisfies **AC-1**, **AC-4**.
-6. Add a store selector in `runtime.ts` and a `src/flags/` flag: durable by default, in memory when the flag is off or `NODE_ENV=test`, satisfies **AC-6**.
-7. Verify restart behavior end to end: reopen a prior job, replay from `Last-Event-ID`, and confirm a cancelled job stays cancelled across a restart, satisfies **AC-2**, **AC-5**.
+1. Add a shared `resolveDataDir()` helper (precedence `DATA_DIR`, serverless `/tmp`, `.data`) and refactor `storage.ts` to use it, so uploads and the DB share one data root, satisfies **AC-8**.
+2. Add `better-sqlite3` and a `src/jobs/db.ts` that opens `<dataDir>/doc-intel.db` on a `globalThis` singleton, applies the WAL pragmas and `busy_timeout`, and on an open or migration failure surfaces a structured error that makes job routes return 5xx with no in memory fall back, satisfies **AC-7**.
+3. Create the idempotent migration for the confirmed schema (`documents`, `jobs`, `job_events`, `reviews`) guarded by `PRAGMA user_version`, satisfies **AC-1**.
+4. Implement `SqliteEventLog` behind `EventLogStore`: `BEGIN IMMEDIATE` append computing `COALESCE(MAX(id),0)+1` per job and writing `jobs.last_event_id` in the same transaction, `since()` as an indexed range scan, JSON+zod validation on read, and a shared in process listener set that fires only after commit, satisfies **AC-2**, **AC-3**.
+5. Implement `SqliteJobStore` and `SqliteDocumentStore` behind their interfaces, with `status`/`last_event_id` updates sharing the event transaction, satisfies **AC-1**.
+6. Carry the retry `attempt` number on the fresh `queued` event `data` so runs are distinguishable in the append only log, satisfies **AC-9**.
+7. Introduce a `ReviewStore` interface and a `SqliteReviewStore` (full replace upsert by `job_id`), and move the raw `reviews` Map in `runtime.ts` behind it, satisfies **AC-1**, **AC-4**.
+8. Add a store selector in `runtime.ts` and a `src/flags/` flag: durable by default, in memory when the flag is off or `NODE_ENV=test`, satisfies **AC-6**.
+9. Verify restart behavior end to end on a single process: reopen a prior job, replay from `Last-Event-ID`, confirm a cancelled job stays cancelled, and document the serverless best effort limit, satisfies **AC-2**, **AC-5**, **AC-10**.
 
 ## Consequences
 
@@ -163,13 +165,14 @@ Ordered as a Tracer Bullet: prove the event log end to end through SQLite first 
 - The store interfaces from spec 0002 finally have a second implementation, proving the seam was real.
 
 **Negative / tradeoffs**:
-- `better-sqlite3` is a native module, so install and CI now carry a compile step and its platform build risk.
-- Durability is real only on a local or self hosted single process. On Vercel it is best effort per isolate (`/tmp`), so the same app is honest but weaker in that environment, a limit that must be documented, not hidden.
+- `better-sqlite3` is a native module, so install and CI now carry a compile step and its platform build risk. Pin the version and rely on the existing Node 20 CI to catch a bad build.
+- Durability is real only on a local or self hosted single process. On Vercel each isolate has its own memory fan out and its own `/tmp`, so a subscriber in one isolate can miss an append in another; the app states this rather than implying cross isolate durability.
+- Writing `jobs.status`/`last_event_id` in the event transaction couples the two writes; the payoff is that a read never sees a job row that disagrees with its log, but every status change now goes through that transaction.
 - Retention is still open: the tables grow unbounded until the follow up lands.
 
 **Neutral**:
-- One new migration and a new `ReviewStore` interface; callers and the UI are untouched.
-- WAL mode leaves `-wal` and `-shm` sidecar files beside the database.
+- One idempotent migration and a new `ReviewStore` interface; callers and the UI are untouched.
+- WAL mode leaves `-wal` and `-shm` sidecar files beside the database; on `/tmp` with a disk quota these can fail, which surfaces through the AC-7 error path rather than silent loss.
 
 ## Follow-up
 
