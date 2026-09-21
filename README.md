@@ -4,7 +4,7 @@ An operator console for **long-running document AI jobs**. Drop a document, watc
 progress live, then review, edit, and approve the extracted fields over a large, virtualized
 document viewer.
 
-Built as a **Staff Software Engineer – Frontend** portfolio piece, deliberately modeled on
+Built on
 [Sarvam AI's Doc AI product](https://docs.sarvam.ai/api/api-guides-tutorials/document-intelligence/overview)
 (Sarvam Vision 1.5): the job model, statuses, and result shape mirror the real API, so the console
 maps 1:1 onto the target domain.
