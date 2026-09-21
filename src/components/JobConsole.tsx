@@ -8,6 +8,7 @@ import { useJobStream } from "@/jobs/useJobStream";
 import { isTerminal } from "@/jobs/types";
 import { flags } from "@/flags";
 import { ReviewList } from "./ReviewList";
+import { ErrorBoundary } from "./ErrorBoundary";
 
 // react-pdf is browser-only; load the viewer without SSR.
 const DocumentViewer = dynamic(() => import("./DocumentViewer").then((m) => m.DocumentViewer), {
@@ -100,13 +101,15 @@ export function JobConsole({ jobId }: { jobId: string }) {
       <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: "var(--space-4)" }}>
         <Panel title="Document">
           {documentId ? (
-            <DocumentViewer
-              documentId={documentId}
-              pageCountHint={total || 4}
-              fields={state.fields}
-              selectedKey={selected}
-              onSelectField={setSelected}
-            />
+            <ErrorBoundary label="The document viewer">
+              <DocumentViewer
+                documentId={documentId}
+                pageCountHint={total || 4}
+                fields={state.fields}
+                selectedKey={selected}
+                onSelectField={setSelected}
+              />
+            </ErrorBoundary>
           ) : (
             <p style={{ color: "var(--text-muted)", margin: 0 }}>Resolving document…</p>
           )}
