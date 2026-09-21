@@ -62,7 +62,7 @@
   align-items: center;
   padding: 1px var(--space-2);
   border-radius: 999px;
-  font-size: 10px;
+  font-size: var(--text-xs);
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -131,4 +131,30 @@
 .confidence {
   font-size: var(--text-xs);
   font-weight: 600;
+}
+
+.sourceChip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  max-width: 100%;
+  padding: 1px var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: var(--text-xs);
+  line-height: 1.4;
+  text-transform: none;
+  letter-spacing: normal;
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: border-color 0.12s ease;
+}
+.sourceChip:hover {
+  border-color: var(--accent);
+  color: var(--text);
 }

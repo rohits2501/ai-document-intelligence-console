@@ -11,11 +11,14 @@ import { ReviewList } from "./ReviewList";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { Walkthrough } from "@/walkthrough/Walkthrough";
 import { jobTour } from "@/walkthrough/tours";
+import { ThemeToggle } from "@/theme/ThemeToggle";
 
 // react-pdf is browser-only; load the viewer without SSR.
 const DocumentViewer = dynamic(() => import("./DocumentViewer").then((m) => m.DocumentViewer), {
   ssr: false,
-  loading: () => <div style={{ padding: 16, color: "var(--text-muted)" }}>Loading viewer…</div>,
+  loading: () => (
+    <div style={{ padding: "var(--space-4)", color: "var(--text-muted)" }}>Loading viewer…</div>
+  ),
 });
 
 /**
@@ -28,13 +31,16 @@ export function JobConsole({ jobId }: { jobId: string }) {
   const [selected, setSelected] = useState<string | null>(null);
   const [acting, setActing] = useState(false);
   const [documentId, setDocumentId] = useState<string | null>(null);
+  const [documentName, setDocumentName] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
     fetch(`/api/jobs/${jobId}`)
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
-        if (active && data?.job) setDocumentId(data.job.documentId);
+        if (!active) return;
+        if (data?.job) setDocumentId(data.job.documentId);
+        if (data?.document) setDocumentName(data.document.name ?? null);
       })
       .catch(() => {});
     return () => {
@@ -77,7 +83,8 @@ export function JobConsole({ jobId }: { jobId: string }) {
             {connected ? "● live" : "○ reconnecting"}
           </span>
         </div>
-        <div style={{ display: "flex", gap: "var(--space-2)" }}>
+        <div style={{ display: "flex", gap: "var(--space-2)", alignItems: "center" }}>
+          <ThemeToggle />
           <Button variant="danger" disabled={acting || terminal} onClick={cancel}>
             Cancel
           </Button>
@@ -128,6 +135,7 @@ export function JobConsole({ jobId }: { jobId: string }) {
           <ReviewList
             jobId={jobId}
             fields={state.fields}
+            documentName={documentName}
             selectedKey={selected}
             onSelect={setSelected}
           />

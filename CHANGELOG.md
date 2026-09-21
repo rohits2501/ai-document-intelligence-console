@@ -3,6 +3,13 @@
 All notable changes to this project are documented here. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/).
 
+## Unreleased
+
+### Added
+
+- **Light theme** on the same token names (`html[data-theme]`). System / Light / Dark toggle;
+  `design.md` is now the critique contract (tokens only, both themes, no second system).
+
 ## [0.1.0] - 2026-09-21
 
 Initial build of the AI Document Intelligence Console.

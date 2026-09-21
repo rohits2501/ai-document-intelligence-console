@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Button } from "@/ui";
+import { Button, SourceChip } from "@/ui";
 import { flags } from "@/flags";
+import { groupLabelForKey } from "@/jobs/field-groups";
 import type { ExtractedField } from "@/jobs/types";
 
 /**
@@ -22,11 +23,13 @@ interface RowState {
 export function ReviewList({
   jobId,
   fields,
+  documentName,
   selectedKey,
   onSelect,
 }: {
   jobId: string;
   fields: ExtractedField[];
+  documentName?: string | null;
   selectedKey: string | null;
   onSelect: (key: string) => void;
 }) {
@@ -81,6 +84,29 @@ export function ReviewList({
 
   const approvedCount = useMemo(() => rows.filter((r) => r.approved).length, [rows]);
 
+  // Source (page/bbox) lives on the incoming field, not the editable row. Look it up by key.
+  const sourceByKey = useMemo(
+    () => new Map(fields.map((f) => [f.key, { page: f.page, source: f.source }])),
+    [fields],
+  );
+
+  // Group rows by label, preserving first-seen group order and arrival order within a group.
+  const groups = useMemo(() => {
+    const order: string[] = [];
+    const byLabel = new Map<string, RowState[]>();
+    for (const row of rows) {
+      const label = groupLabelForKey(row.key);
+      let bucket = byLabel.get(label);
+      if (!bucket) {
+        bucket = [];
+        byLabel.set(label, bucket);
+        order.push(label);
+      }
+      bucket.push(row);
+    }
+    return order.map((label) => ({ label, rows: byLabel.get(label) ?? [] }));
+  }, [rows]);
+
   function update(key: string, patch: Partial<RowState>) {
     setRows((prev) => prev.map((r) => (r.key === key ? { ...r, ...patch } : r)));
     setSaved(null);
@@ -111,94 +137,119 @@ export function ReviewList({
 
   return (
     <div style={{ display: "grid", gap: "var(--space-3)" }}>
-      <div style={{ display: "grid", gap: "var(--space-2)" }}>
-        {rows.map((r) => {
-          const color =
-            r.confidence >= CONFIDENCE_THRESHOLD
-              ? "var(--status-completed)"
-              : r.confidence >= 0.7
-                ? "var(--status-partial)"
-                : "var(--status-failed)";
-          const isSelected = selectedKey === r.key;
-          return (
-            <div
-              key={r.key}
-              role="button"
-              tabIndex={0}
-              aria-pressed={isSelected}
-              aria-label={`Review ${r.key}, ${Math.round(r.confidence * 100)} percent confidence`}
-              onClick={() => onSelect(r.key)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  onSelect(r.key);
-                }
-              }}
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr auto",
-                gap: "var(--space-2)",
-                alignItems: "center",
-                padding: "var(--space-3)",
-                border: `1px solid ${isSelected ? "var(--accent)" : "var(--border)"}`,
-                borderRadius: "var(--radius-sm)",
-                background: "var(--surface-2)",
-              }}
-            >
-              <div style={{ display: "grid", gap: 4 }}>
-                <div
-                  style={{
-                    fontSize: "var(--text-xs)",
-                    color: "var(--text-muted)",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.03em",
-                  }}
-                >
-                  {r.key} <span style={{ color }}>· {Math.round(r.confidence * 100)}%</span>
-                </div>
-                {flags.reviewEditing ? (
-                  <input
-                    value={r.value}
-                    onChange={(e) => update(r.key, { value: e.target.value })}
-                    onClick={(e) => e.stopPropagation()}
-                    style={{
-                      background: "var(--surface)",
-                      border: "1px solid var(--border)",
-                      borderRadius: "var(--radius-sm)",
-                      color: "var(--text)",
-                      padding: "6px 8px",
-                      fontSize: "var(--text-base)",
-                      fontFamily: "inherit",
-                    }}
-                  />
-                ) : (
-                  <span style={{ fontSize: "var(--text-base)" }}>{r.value}</span>
-                )}
-              </div>
-              <label
-                onClick={(e) => e.stopPropagation()}
+      {groups.map((group) => (
+        <div key={group.label} style={{ display: "grid", gap: "var(--space-2)" }}>
+          <div
+            style={{
+              fontSize: "var(--text-xs)",
+              color: "var(--text-muted)",
+              textTransform: "uppercase",
+              letterSpacing: "0.04em",
+            }}
+          >
+            {group.label}
+          </div>
+          {group.rows.map((r) => {
+            const color =
+              r.confidence >= CONFIDENCE_THRESHOLD
+                ? "var(--status-completed)"
+                : r.confidence >= 0.7
+                  ? "var(--status-partial)"
+                  : "var(--status-failed)";
+            const isSelected = selectedKey === r.key;
+            const src = sourceByKey.get(r.key);
+            return (
+              <div
+                key={r.key}
+                role="button"
+                tabIndex={0}
+                aria-pressed={isSelected}
+                aria-label={`Review ${r.key}, ${Math.round(r.confidence * 100)} percent confidence`}
+                onClick={() => onSelect(r.key)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onSelect(r.key);
+                  }
+                }}
                 style={{
-                  display: "inline-flex",
-                  gap: 6,
+                  display: "grid",
+                  gridTemplateColumns: "1fr auto",
+                  gap: "var(--space-2)",
                   alignItems: "center",
-                  fontSize: "var(--text-xs)",
-                  color: r.approved ? "var(--status-completed)" : "var(--text-muted)",
-                  cursor: "pointer",
-                  whiteSpace: "nowrap",
+                  padding: "var(--space-3)",
+                  border: `1px solid ${isSelected ? "var(--accent)" : "var(--border)"}`,
+                  borderRadius: "var(--radius-sm)",
+                  background: "var(--surface-2)",
                 }}
               >
-                <input
-                  type="checkbox"
-                  checked={r.approved}
-                  disabled={!flags.reviewEditing}
-                  onChange={(e) => update(r.key, { approved: e.target.checked })}
-                />
-                {r.approved ? "Approved" : "Flagged"}
-              </label>
-            </div>
-          );
-        })}
-      </div>
+                <div style={{ display: "grid", gap: 4 }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "var(--space-2)",
+                      flexWrap: "wrap",
+                      fontSize: "var(--text-xs)",
+                      color: "var(--text-muted)",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.03em",
+                    }}
+                  >
+                    <span>
+                      {r.key} <span style={{ color }}>· {Math.round(r.confidence * 100)}%</span>
+                    </span>
+                    <SourceChip
+                      page={src?.page}
+                      source={src?.source}
+                      documentName={documentName}
+                      onActivate={() => onSelect(r.key)}
+                    />
+                  </div>
+                  {flags.reviewEditing ? (
+                    <input
+                      value={r.value}
+                      onChange={(e) => update(r.key, { value: e.target.value })}
+                      onClick={(e) => e.stopPropagation()}
+                      style={{
+                        background: "var(--surface)",
+                        border: "1px solid var(--border)",
+                        borderRadius: "var(--radius-sm)",
+                        color: "var(--text)",
+                        padding: "6px 8px",
+                        fontSize: "var(--text-base)",
+                        fontFamily: "inherit",
+                      }}
+                    />
+                  ) : (
+                    <span style={{ fontSize: "var(--text-base)" }}>{r.value}</span>
+                  )}
+                </div>
+                <label
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    display: "inline-flex",
+                    gap: 6,
+                    alignItems: "center",
+                    fontSize: "var(--text-xs)",
+                    color: r.approved ? "var(--status-completed)" : "var(--text-muted)",
+                    cursor: "pointer",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={r.approved}
+                    disabled={!flags.reviewEditing}
+                    onChange={(e) => update(r.key, { approved: e.target.checked })}
+                  />
+                  {r.approved ? "Approved" : "Flagged"}
+                </label>
+              </div>
+            );
+          })}
+        </div>
+      ))}
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <span style={{ fontSize: "var(--text-xs)", color: "var(--text-muted)" }}>

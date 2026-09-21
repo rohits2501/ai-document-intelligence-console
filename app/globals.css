@@ -1,4 +1,5 @@
-:root {
+:root,
+[data-theme="dark"] {
   color-scheme: dark;
 
   /* color */
@@ -12,11 +13,13 @@
   --accent-contrast: #ffffff;
   --accent-soft: rgba(79, 140, 255, 0.16);
 
-  /* overlay scrim for the walkthrough spotlight */
+  /* overlay / elevation */
   --scrim: rgba(3, 6, 12, 0.72);
+  --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  --paper: #ffffff;
 
-  /* status */
-  --status-queued: #64748b;
+  /* status — same hue family in both themes */
+  --status-queued: #94a3b8;
   --status-processing: #4f8cff;
   --status-partial: #f5a623;
   --status-completed: #35c46a;
@@ -43,6 +46,30 @@
   --text-lg: 16px;
   --text-xl: 20px;
   --text-2xl: 26px;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #f3f5f8;
+  --surface: #ffffff;
+  --surface-2: #eef2f7;
+  --border: #d0d7e2;
+  --text: #0f172a;
+  --text-muted: #4b5b70;
+  --accent: #2563eb;
+  --accent-contrast: #ffffff;
+  --accent-soft: rgba(37, 99, 235, 0.12);
+
+  --scrim: rgba(15, 23, 42, 0.48);
+  --shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+  --paper: #ffffff;
+
+  --status-queued: #64748b;
+  --status-processing: #2563eb;
+  --status-partial: #b45309;
+  --status-completed: #15803d;
+  --status-failed: #dc2626;
 }
 
 * {

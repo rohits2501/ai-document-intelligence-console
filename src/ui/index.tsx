@@ -140,3 +140,42 @@ export function FieldRow({
     </div>
   );
 }
+
+/**
+ * A small chip that names where a field came from (document name + page) and, when clicked, selects
+ * that field so the viewer highlights its box. Tokens only. Renders nothing when there is no source
+ * to point at, so status/source is never conveyed by an empty slot.
+ */
+export function SourceChip({
+  page,
+  source,
+  documentName,
+  onActivate,
+}: {
+  page?: number | null;
+  source?: string | null;
+  documentName?: string | null;
+  onActivate?: () => void;
+}) {
+  const pageLabel = page != null ? `p${page}` : (source ?? null);
+  if (!pageLabel) return null;
+
+  const label = documentName ? `${documentName} ${pageLabel}` : pageLabel;
+  const pageText = page != null ? `page ${page}` : pageLabel;
+  const ariaLabel = documentName ? `Source, ${documentName} ${pageText}` : `Source, ${pageText}`;
+
+  return (
+    <button
+      type="button"
+      className={styles.sourceChip}
+      aria-label={ariaLabel}
+      title={label}
+      onClick={(e) => {
+        e.stopPropagation();
+        onActivate?.();
+      }}
+    >
+      {label}
+    </button>
+  );
+}

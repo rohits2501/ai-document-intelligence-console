@@ -31,7 +31,10 @@ export async function PUT(req: NextRequest) {
       const committed = await currentSize(session.storageKey);
       if (offset !== committed) {
         // idempotent resume: tell the client where we actually are
-        return NextResponse.json({ error: "offset mismatch", expected: committed }, { status: 409 });
+        return NextResponse.json(
+          { error: "offset mismatch", expected: committed },
+          { status: 409 },
+        );
       }
       await appendChunk(session.storageKey, buf);
       const received = await currentSize(session.storageKey);

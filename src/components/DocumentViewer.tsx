@@ -109,7 +109,7 @@ export function DocumentViewer({
                   padding: "8px 0",
                 }}
               >
-                <div style={{ position: "relative", background: "#fff", borderRadius: 2 }}>
+                <div style={{ position: "relative", background: "var(--paper)", borderRadius: 2 }}>
                   {failed ? (
                     <PageFrame pageNumber={pageNumber} />
                   ) : (
@@ -171,7 +171,7 @@ function Overlay({
               width: `${f.bbox.w * 100}%`,
               height: `${f.bbox.h * 100}%`,
               border: `2px solid ${color}`,
-              background: selected ? "rgba(79,140,255,0.18)" : "transparent",
+              background: selected ? "var(--accent-soft)" : "transparent",
               boxShadow: selected ? "0 0 0 2px var(--accent)" : "none",
               borderRadius: 2,
               pointerEvents: "auto",
@@ -193,9 +193,10 @@ function PageFrame({ pageNumber }: { pageNumber: number }) {
         height: Math.round(PAGE_WIDTH / A4_RATIO),
         display: "grid",
         placeItems: "center",
-        color: "#94a3b8",
-        fontSize: 13,
-        border: "1px solid #e2e8f0",
+        color: "var(--text-muted)",
+        fontSize: "var(--text-sm)",
+        border: "1px solid var(--border)",
+        background: "var(--paper)",
       }}
     >
       Page {pageNumber}
