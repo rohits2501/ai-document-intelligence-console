@@ -140,7 +140,7 @@ Jobs, events, and reviews survive a process restart, so the event log is actuall
    - [x] Durable event log plus job and document stores, transactional append that keeps last_event_id consistent (AC-1, AC-2, AC-3, AC-9)
    - [x] Durable reviews plus the durable/in-memory store selector flag (AC-1, AC-4, AC-6)
 - [ ] Verify it: `/check verify durable job store` (restart replay, cancel stays cancelled, serverless limit documented; AC-2, AC-5, AC-10)
-- [ ] Test it: `/test durable job store`
+- [x] Test it: `/test durable job store`
 Spec [0005](../specs/0005-durable-job-store/index.md) · code in `src/jobs/`, `src/data-dir.ts`, `src/flags/`
 
 ## Slice 9: Measured performance

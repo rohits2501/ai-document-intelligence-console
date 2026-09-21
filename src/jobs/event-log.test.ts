@@ -44,4 +44,13 @@ describe("InMemoryEventLog", () => {
     log.append("j", "completed", {});
     expect(seen).toEqual([1, 2]);
   });
+
+  it("stamps attempt 1 on the first queued event and increments on retry (AC-9)", () => {
+    const log = new InMemoryEventLog();
+    const first = log.append("j", "queued", { message: "first" });
+    log.append("j", "failed", { error: "boom" });
+    const retry = log.append("j", "queued", { message: "retry" });
+    expect(first.data.attempt).toBe(1);
+    expect(retry.data.attempt).toBe(2);
+  });
 });
