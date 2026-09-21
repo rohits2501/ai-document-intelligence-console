@@ -3,7 +3,7 @@
 A document intelligence job console for operators: drop a document, watch a long running processing job stream its progress, then review, edit, and approve the extracted fields on the page. Built as a Staff Frontend portfolio piece around real time streaming, long running jobs, large documents, and human review.
 
 **Build approach:** Tracer Bullet (prove one thin real thread through every layer first, then thicken each segment).
-**Workflow:** Alpha (after `/develop`, run `/check verify`). Two features carry a `· Beta` tag (Stack & architecture, Core job loop) so they also get `/test`, because the job and event machine must stay locked by tests. `/check review` and `/document` run once at the end.
+**Workflow:** Alpha (after `/develop`, run `/check verify`). Three features carry a `· Beta` tag (Stack & architecture, Core job loop, Durable job store) so they also get `/test`, because the job machine and the store that holds it must stay locked by tests. `/check review` and `/document` run once at the end.
 
 _These are recommendations to keep your build orderly, not requirements. Skip anything that does not fit: if you already know how to build a feature, use `/develop` and skip `/architect`. You decide when a feature is `done`._
 
@@ -23,6 +23,9 @@ _These are recommendations to keep your build orderly, not requirements. Skip an
 | 10 | Observability & performance | Slice 6 | done |
 | 11 | Reliability & release | Slice 7 | done |
 | 12 | Real extraction provider + media stretch | Deferred | done (provider) |
+| 13 | Durable job store | Slice 8 | planned |
+| 14 | Operator job queue | Slice 9 | planned |
+| 15 | Extract schema on upload | Slice 10 | planned |
 
 ## Foundations
 
@@ -123,6 +126,27 @@ One feature flag gating a slice, CI running lint/typecheck/tests, and a release 
 - [x] Test the job machine: `/test` (mock provider + worker: 16 tests total, incl. cancel path)
 - [x] Release note: `/document` (README + CHANGELOG + `docs/RELEASE_NOTES.md`)
 Code in `src/flags/`, `.github/workflows/ci.yml`
+
+## Slice 8: Durable job store
+
+### 13. Durable job store · planned · needs a decision · Beta
+Jobs, events, and reviews survive a process restart, so the event log is actually durable and the unbounded in memory store finding from review 0001 is closed.
+**Done when:** after a restart, an operator can open a prior job, replay its events from Last-Event-ID, and keep reviewing without losing edits.
+- [ ] Design it (spec): `/architect durable job store`
+
+## Slice 9: Operator job queue
+
+### 14. Operator job queue · planned
+The home list shows document names and status filters, and updates as jobs move, so an operator can find work without a raw id list that polls every few seconds.
+**Done when:** an operator can filter jobs by status, see the document name, and watch the list update as jobs progress.
+- [ ] Build it: `/develop operator job queue`
+
+## Slice 10: Extract schema on upload
+
+### 15. Extract schema on upload · planned · needs a decision
+The operator picks or pastes an extract schema when creating a job, so extract is not a fixed fixture list.
+**Done when:** creating an extract job sends a schema, and the fields on the console match that schema.
+- [ ] Design it (spec): `/architect extract schema on upload`
 
 ## Deferred
 Out of scope for the current build pass, kept so the plan stays honest.
