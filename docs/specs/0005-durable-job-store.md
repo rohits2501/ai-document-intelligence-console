@@ -135,11 +135,13 @@ Cardinality: one document has many jobs; one job has many events and at most one
 
 **Critical test scenarios** (each maps to an AC):
 - Happy path: create a job, drive it to a terminal status, restart the store, reopen the job, replay from `Last-Event-ID` gap free, verifies **AC-1**, **AC-2**.
-- Failure case: many concurrent appends to one job keep ids 1 based and contiguous, verifies **AC-3**.
+- Failure case: many concurrent appends to one job keep ids 1 based and contiguous, and `jobs.last_event_id` equals `MAX(job_events.id)` afterward, verifies **AC-3**.
 - Restart persistence: submit a review, restart, the edits and approvals restore, verifies **AC-4**.
 - Reconnect and cancel: cancel a job, restart, a reconnect replays the same log and the job is still cancelled, verifies **AC-5**.
 - Store selection: with the flag off (or `NODE_ENV=test`) the in memory store is active and writes nothing to disk, verifies **AC-6**.
-- Corrupt open: pointing at an unreadable or corrupt DB file logs a structured error naming the path and refuses to start, verifies **AC-7**.
+- Open failure: pointing at an unreadable or corrupt DB makes the job routes return 5xx with a structured log naming the path, and it does not fall back to in memory, verifies **AC-7**.
+- Retry segmentation: retry a failed job, the new `queued` event carries `attempt = 2` and the prior run's rows are still present, verifies **AC-9**.
+- Corrupt row: a `job_events` row with unparseable `data` fails the read request with a structured error rather than being skipped, verifies the read time validation invariant.
 
 ## Build plan
 
