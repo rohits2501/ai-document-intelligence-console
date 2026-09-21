@@ -24,13 +24,15 @@ The consequence of not deciding: the event log stays in memory, the streaming re
 
 **Acceptance criteria** (the contract, each independently checkable):
 - **AC-1**: Jobs, documents, the event log, and reviews all persist to an embedded SQLite database file on local disk, and the durable store is the default when the app runs normally.
-- **AC-2**: After a process restart, a prior job reopens and its events replay from a given `Last-Event-ID` in order, with no gaps and no duplicates, then follow live.
+- **AC-2**: On a single process deployment, after a restart a prior job reopens and its events replay from a given `Last-Event-ID` in order, with no gaps and no duplicates, then follow live. (Serverless is best effort per isolate, see AC-9.)
 - **AC-3**: Per job event ids stay monotonic, 1 based, and gap free under concurrent appends to the same job.
 - **AC-4**: Review edits and approvals survive a restart and restore into the console.
-- **AC-5**: After a restart, reconnect and cancel land on the same truth: a cancelled job stays cancelled, and a reconnect replays the same log rather than a fresh one.
+- **AC-5**: On a single process deployment, after a restart reconnect and cancel land on the same truth: a cancelled job stays cancelled, and a reconnect replays the same log rather than a fresh one.
 - **AC-6**: The active store is selected at runtime. Durable is the default; a feature flag or `NODE_ENV=test` forces the in memory store, so tests and ephemeral hosts get a clean store.
-- **AC-7**: If the database file cannot be opened or is corrupt, the app logs a structured error that names the path and refuses to start, rather than silently running half working.
-- **AC-8**: The database path is derived from a `DATA_DIR` env var (default `.data` locally, `/tmp` on serverless), with the database at `<DATA_DIR>/doc-intel.db`, consistent with how `src/upload/storage.ts` already resolves its data root.
+- **AC-7**: If the database cannot be opened or the migration fails, the job, document, and review routes return a 5xx with a structured log that names the database path and the error, and there is no silent fall back to the in memory store (only the explicit flag or `NODE_ENV=test` selects in memory).
+- **AC-8**: The data root is resolved by one shared `resolveDataDir()` helper with precedence `DATA_DIR` env, then the serverless default (`/tmp`), then local `.data`. Both uploads and the database use it; the database lives at `<dataDir>/doc-intel.db`.
+- **AC-9**: A retry is distinguishable in the durable log: the fresh `queued` event carries an `attempt` number in its `data`, so prior run rows stay in the append only history without ambiguity.
+- **AC-10**: True cross restart durability is scoped to single process (local or self hosted) deployments. On serverless the store is best effort per isolate, and this limit is stated in the app's honest limits, not hidden.
 
 ## Options considered
 
@@ -98,30 +100,38 @@ Cardinality: one document has many jobs; one job has many events and at most one
 
 **State transitions**: unchanged from spec 0002 (`queued -> processing -> completed | partially_completed | failed | rejected`, plus `cancelled`). This spec persists the transitions, it does not change them.
 
-**API surface**: no HTTP surface changes. The existing routes (`/api/jobs`, `/api/jobs/:id/events`, `/cancel`, `/retry`, `/review`) keep their contracts; only the store behind `src/jobs/runtime.ts` changes.
+**API surface**: no HTTP surface changes. The existing routes (`/api/jobs`, `/api/jobs/:id/events`, `/cancel`, `/retry`, `/review`) keep their contracts; only the store behind `src/jobs/runtime.ts` changes. Two behaviors are pinned that were previously implicit: `POST /api/jobs/:id/review` is a full replace upsert keyed by `job_id` (latest `submitted_at` wins), and on a store open or migration failure these routes return 5xx (AC-7).
 
 **Value sourcing**:
 | Action | Value produced / displayed | Source |
 |---|---|---|
-| append event | per job `id` (1 based, monotonic) | `COALESCE(MAX(id),0)+1` for that `job_id` inside one write transaction |
+| append event | per job `id` (1 based, monotonic) | `COALESCE(MAX(id),0)+1` for that `job_id`, computed and inserted inside one `BEGIN IMMEDIATE` write transaction |
 | append event | `ts` | server clock at write |
+| append event | `jobs.last_event_id` | written in the same transaction as the event insert (`job_events` is canonical; the column is a cache kept consistent in that transaction) |
+| retry | `attempt` number on the fresh `queued` event | `MAX(attempt) + 1` over that job's prior `queued` events, in the retry transaction |
 | replay after restart | events after `Last-Event-ID` | `job_events` range scan `WHERE job_id = ? AND id > ?` ordered by `id` |
-| open store at boot | database path | `<DATA_DIR>/doc-intel.db`, `DATA_DIR` env (default `.data`, `/tmp` on serverless), same resolver as `storage.ts` |
-| select store | durable vs in memory | feature flag (`NEXT_PUBLIC_*`/env) and `NODE_ENV`; in memory when the flag says so or `NODE_ENV=test` |
+| replay after restart | `pages_processed` / `total_pages` | rebuilt by the existing client reducer from the replayed events (no new stored source) |
+| open store at boot | data root + database path | `resolveDataDir()` (precedence `DATA_DIR` env, then serverless `/tmp`, then `.data`), database at `<dataDir>/doc-intel.db` |
+| select store | durable vs in memory | feature flag (`src/flags/`) and `NODE_ENV`; in memory when the flag is off or `NODE_ENV=test` |
 | restore review | saved `fields` + approvals | `reviews.fields` JSON for that `job_id` |
 
 **Key invariants**:
 - The event log is append only. No update or delete of a `job_events` row in this slice.
 - `(job_id, id)` is unique and contiguous from 1 per job; a replay never returns a gap or a duplicate.
-- The live fan out fires only after the event is durably written, so a subscriber never sees an event that a restart would lose.
+- `job_events` is the source of truth. `jobs.last_event_id` and `jobs.status` are written in the same transaction as the event that changes them, so a read never sees a job row that disagrees with its log.
+- The append runs under `BEGIN IMMEDIATE` (a write lock taken up front), so two concurrent appends to one job serialize rather than collide.
+- The live fan out fires only after the transaction commits, so a subscriber never sees an event that a rollback or a restart would lose.
+- One `better-sqlite3` connection and one listener set are shared per process via a `globalThis` singleton (the same pattern `runtime.ts` uses today), so an append in one route module notifies a subscriber registered in the SSE route module. Node runtime only.
 - Exactly one store implementation is active per process, chosen once at startup.
+- Event `data` is JSON parsed and zod validated on read; an invalid row fails the request with a structured error rather than being skipped, so a corrupt row never silently corrupts a timeline.
 
 **Security model**: unchanged. Single operator local demo, no auth (auth stays deferred in scope). The database file sits under the same local data root as uploads; no new external surface.
 
 **Configuration required**:
-- `DATA_DIR`: data root for the database file (and already the upload root). Default `.data` locally, `/tmp` on serverless. DB at `<DATA_DIR>/doc-intel.db`.
-- A feature flag in `src/flags/` (for example `NEXT_PUBLIC_FEATURE_DURABLE_STORE`, default on) to force the in memory store off for tests and ephemeral hosts. `NODE_ENV=test` also forces in memory.
-- SQLite pragmas set at open: `journal_mode=WAL`, `synchronous=NORMAL`, `busy_timeout`, `foreign_keys=ON`.
+- `DATA_DIR`: data root for the database file and the upload bytes, resolved by the shared `resolveDataDir()` (precedence `DATA_DIR`, then serverless `/tmp`, then `.data`). DB at `<dataDir>/doc-intel.db`.
+- A feature flag in `src/flags/` (for example `FEATURE_DURABLE_STORE`, default on) to force the in memory store off for tests and ephemeral hosts. `NODE_ENV=test` also forces in memory.
+- SQLite pragmas set at open: `journal_mode=WAL`, `synchronous=NORMAL`, `busy_timeout` (so a lock waits instead of throwing), `foreign_keys=ON`.
+- Schema version tracked with `PRAGMA user_version`, so the migration runs once and is idempotent under parallel cold starts.
 
 **Critical test scenarios** (each maps to an AC):
 - Happy path: create a job, drive it to a terminal status, restart the store, reopen the job, replay from `Last-Event-ID` gap free, verifies **AC-1**, **AC-2**.
