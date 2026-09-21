@@ -116,6 +116,7 @@ export function JobConsole({ jobId }: { jobId: string }) {
             <ErrorBoundary label="The document viewer">
               <DocumentViewer
                 documentId={documentId}
+                documentName={documentName}
                 pageCountHint={total || 4}
                 fields={state.fields}
                 selectedKey={selected}

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { Tour, TourStep } from "./types";
+import { setTourDismissed, wasTourDismissed } from "./dismissed";
 
 export interface WalkthroughController {
   active: boolean;
@@ -21,9 +22,9 @@ export interface WalkthroughController {
  * DOM measurement and spotlight positioning live in the Walkthrough component; this hook only owns
  * the "which step, is it running" state plus keyboard shortcuts.
  *
- * autoStart runs the tour once per mount (the "every session" demo behavior the operator picked):
- * a fresh page load restarts it, and skipping only dismisses it for that view. The delay lets the
- * target surfaces mount before the first spotlight is measured.
+ * autoStart runs once for a first-time visitor (or after storage is cleared). Skip, Escape, and
+ * Done persist a dismissed flag so a reload or revisit stays quiet until Show tour is clicked.
+ * The delay lets the target surfaces mount before the first spotlight is measured.
  */
 export function useWalkthrough(
   tour: Tour,
@@ -35,39 +36,45 @@ export function useWalkthrough(
 
   const start = useCallback(() => {
     if (!enabled || total === 0) return;
+    setTourDismissed(tour.id, false);
     setIndex(0);
     setActive(true);
-  }, [enabled, total]);
+  }, [enabled, total, tour.id]);
 
-  const stop = useCallback(() => setActive(false), []);
+  const stop = useCallback(() => {
+    setTourDismissed(tour.id, true);
+    setActive(false);
+  }, [tour.id]);
 
   const next = useCallback(() => {
     setIndex((i) => {
       if (i + 1 >= total) {
+        setTourDismissed(tour.id, true);
         setActive(false);
         return i;
       }
       return i + 1;
     });
-  }, [total]);
+  }, [total, tour.id]);
 
   const back = useCallback(() => setIndex((i) => Math.max(0, i - 1)), []);
 
   useEffect(() => {
     if (!enabled || !autoStart) return;
+    if (wasTourDismissed(tour.id)) return;
     const t = window.setTimeout(() => {
       setIndex(0);
       setActive(true);
     }, 450);
     return () => window.clearTimeout(t);
-  }, [enabled, autoStart]);
+  }, [enabled, autoStart, tour.id]);
 
   useEffect(() => {
     if (!active) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
-        setActive(false);
+        stop();
       } else if (e.key === "ArrowRight") {
         next();
       } else if (e.key === "ArrowLeft") {
@@ -76,7 +83,7 @@ export function useWalkthrough(
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [active, next, back]);
+  }, [active, next, back, stop]);
 
   return {
     active,

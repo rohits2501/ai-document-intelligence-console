@@ -164,10 +164,19 @@ export function Walkthrough({ tour }: { tour: Tour }) {
     setPos(place(rect, width, height, step.placement ?? "auto"));
   }, [active, step, rect]);
 
-  // Move focus into the popover on each step; return it to the restart pill on close.
+  // Move focus into the popover on each step; return it to the restart pill only when the
+  // operator just closed the tour (not on the first render of a dismissed session).
+  const wasActiveRef = useRef(false);
   useEffect(() => {
-    if (active) primaryRef.current?.focus();
-    else restartRef.current?.focus();
+    if (active) {
+      wasActiveRef.current = true;
+      primaryRef.current?.focus();
+      return;
+    }
+    if (wasActiveRef.current) {
+      wasActiveRef.current = false;
+      restartRef.current?.focus();
+    }
   }, [active, index]);
 
   if (!enabled) return null;

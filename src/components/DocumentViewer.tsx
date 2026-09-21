@@ -20,14 +20,24 @@ const EST_PAGE_HEIGHT = Math.round(PAGE_WIDTH / A4_RATIO) + 16;
  * Real PDFs render via pdf.js; non-PDFs or load failures fall back to virtualized page frames so
  * the overlay + virtualization story still holds.
  */
+const IMAGE_EXTENSIONS = ["png", "jpg", "jpeg", "webp", "gif"];
+
+function isImageName(name: string | null | undefined): boolean {
+  if (!name) return false;
+  const ext = name.toLowerCase().split(".").pop() ?? "";
+  return IMAGE_EXTENSIONS.includes(ext);
+}
+
 export function DocumentViewer({
   documentId,
+  documentName,
   pageCountHint = 4,
   fields,
   selectedKey,
   onSelectField,
 }: {
   documentId: string;
+  documentName?: string | null;
   pageCountHint?: number;
   fields: ExtractedField[];
   selectedKey: string | null;
@@ -63,6 +73,18 @@ export function DocumentViewer({
     const f = fields.find((x) => x.key === selectedKey);
     if (f?.page) virtualizer.scrollToIndex(f.page - 1, { align: "center" });
   }, [selectedKey, fields, virtualizer]);
+
+  // Images render as a single page via <img>; only PDFs go through pdf.js + virtualization.
+  if (isImageName(documentName)) {
+    return (
+      <ImageViewer
+        fileUrl={fileUrl}
+        fields={fields.filter((f) => (f.page ?? 1) === 1)}
+        selectedKey={selectedKey}
+        onSelectField={onSelectField}
+      />
+    );
+  }
 
   return (
     <div
@@ -133,6 +155,52 @@ export function DocumentViewer({
           })}
         </div>
       </Document>
+    </div>
+  );
+}
+
+/**
+ * Single-image document view. The uploaded image is the page; extraction boxes overlay it exactly
+ * as they do on a PDF page. No virtualization is needed for one image.
+ */
+function ImageViewer({
+  fileUrl,
+  fields,
+  selectedKey,
+  onSelectField,
+}: {
+  fileUrl: string;
+  fields: ExtractedField[];
+  selectedKey: string | null;
+  onSelectField: (key: string) => void;
+}) {
+  const [failed, setFailed] = useState(false);
+  return (
+    <div
+      style={{
+        height: 560,
+        overflow: "auto",
+        background: "var(--surface-2)",
+        borderRadius: "var(--radius-sm)",
+      }}
+    >
+      <div style={{ width: PAGE_WIDTH, margin: "0 auto", padding: "8px 0" }}>
+        <div style={{ position: "relative", background: "var(--paper)", borderRadius: 2 }}>
+          {failed ? (
+            <PageFrame pageNumber={1} />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={fileUrl}
+              alt="Uploaded document"
+              width={PAGE_WIDTH}
+              onError={() => setFailed(true)}
+              style={{ display: "block", width: PAGE_WIDTH, height: "auto" }}
+            />
+          )}
+          <Overlay fields={fields} selectedKey={selectedKey} onSelectField={onSelectField} />
+        </div>
+      </div>
     </div>
   );
 }
