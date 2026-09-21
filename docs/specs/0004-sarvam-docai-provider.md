@@ -1,4 +1,4 @@
-# 0004 · Real Sarvam Doc AI provider (stretch)
+# 0004 · Real Sarvam Doc AI provider
 
 **Status**: Accepted
 **Date**: 2026-09-21
@@ -36,10 +36,6 @@ confidence and the first source's page/bbox (object or `[x0,y0,x1,y1]` array for
 
 - The console's own status vocabulary (chosen in spec 0002) is a 1:1 match for Sarvam's, so the map is trivial and honest.
 - The provider is I/O against a live API; only the pure `mapAnnotations` is unit-tested here (endpoint calls need a key + network and are out of scope for the demo's CI).
-
-## Out of scope
-
-- PDF→podcast / TTS media slice: intentionally not built. The console never claims production media/dubbing capability.
 
 ## References
 
