@@ -84,14 +84,21 @@ Sarvam `extract` `annotations` shape.
 ## Tech
 
 Next.js 14 (App Router), React 18, TypeScript (strict), SSE via native `EventSource`, Zod, Zustand,
-`@tanstack/react-virtual`, `react-pdf`/`pdfjs-dist`, Vitest.
+`@tanstack/react-virtual`, `react-pdf`/`pdfjs-dist`, `better-sqlite3`, Vitest.
 
 ## Notes & honest limits
 
-- Storage and the event log are **in-memory / local disk** for the demo (swappable behind
-  interfaces — see spec 0002 AC-9). Not a production object store. Locally, files live under
-  `.data/uploads/`. On Vercel the app filesystem is read-only, so uploads go to `/tmp`.
-- The default provider is a **mock**; extraction values are illustrative fixtures.
+- Jobs, events, documents, and reviews persist to an embedded SQLite file (`<dataDir>/doc-intel.db`)
+  on a **single Node process** (local or self-hosted). `DATA_DIR` selects the data root, then
+  serverless `/tmp`, then local `.data`. Uploads share that root under `uploads/`.
+- On Vercel, durability is **best effort per isolate**: each isolate has its own `/tmp` and its own
+  in-process SSE fan-out, so an append in one isolate does not notify a subscriber in another, and a
+  later request may land on a cold isolate with an empty store. True cross-restart replay is a
+  single-process property, not a serverless one.
+- Set `FEATURE_DURABLE_STORE=false` (or `NODE_ENV=test`) to force the in-memory store. A failed
+  database open returns 5xx; it does not silently fall back to memory.
+- Retention is still unbounded (a follow-up). The default provider is a **mock**; extraction values
+  are illustrative fixtures.
 - No auth/accounts (single-operator demo).
 
 ## Built with a spec-driven workflow

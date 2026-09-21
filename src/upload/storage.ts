@@ -1,17 +1,15 @@
 import { mkdir, writeFile, appendFile, readFile, stat, unlink } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
+import { resolveDataDir } from "@/data-dir";
 
 /**
  * Local disk storage for the demo (spec 0001: no external services). Not a production object store.
- *
- * On a long-lived Node process, files live under `.data/uploads/`.
- * On Vercel the app directory is read-only, so we write to `/tmp` instead — that is what made
- * the first chunk return 500 (`EACCES`/`EROFS` from mkdir/append under cwd).
+ * Shares `resolveDataDir()` with the job database (spec 0005 AC-8): DATA_DIR, then `/tmp` on
+ * serverless, then `.data`. Upload bytes live under `<dataDir>/uploads`.
  */
 export function storageRoot(): string {
-  if (process.env.VERCEL) return path.join("/tmp", "doc-intel-uploads");
-  return path.join(process.cwd(), ".data", "uploads");
+  return path.join(resolveDataDir(), "uploads");
 }
 
 async function ensureRoot() {

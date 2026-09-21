@@ -135,13 +135,13 @@ Code in `src/flags/`, `.github/workflows/ci.yml`
 Jobs, events, and reviews survive a process restart, so the event log is actually durable and the unbounded in memory store finding from review 0001 is narrowed (durability now, retention as follow up). Stream reliability (reconnect, cancel, replay after a refresh) is proven here, not as its own feature. (basis: a test suite is not a product feature)
 **Done when:** after a restart, an operator can open a prior job, replay its events from Last-Event-ID, keep reviewing without losing edits, and a reconnect or cancel still lands on the same truth.
 - [x] Design it (spec): `/architect durable job store`
-- [ ] Build it: `/develop durable job store`
-   - [ ] Data root helper, SQLite open on a singleton, idempotent migration (AC-1, AC-7, AC-8)
-   - [ ] Durable event log plus job and document stores, transactional append that keeps last_event_id consistent (AC-1, AC-2, AC-3, AC-9)
-   - [ ] Durable reviews plus the durable/in-memory store selector flag (AC-1, AC-4, AC-6)
+- [x] Build it: `/develop durable job store`
+   - [x] Data root helper, SQLite open on a singleton, idempotent migration (AC-1, AC-7, AC-8)
+   - [x] Durable event log plus job and document stores, transactional append that keeps last_event_id consistent (AC-1, AC-2, AC-3, AC-9)
+   - [x] Durable reviews plus the durable/in-memory store selector flag (AC-1, AC-4, AC-6)
 - [ ] Verify it: `/check verify durable job store` (restart replay, cancel stays cancelled, serverless limit documented; AC-2, AC-5, AC-10)
 - [ ] Test it: `/test durable job store`
-Spec [0005](../specs/0005-durable-job-store.md)
+Spec [0005](../specs/0005-durable-job-store/index.md) · code in `src/jobs/`, `src/data-dir.ts`, `src/flags/`
 
 ## Slice 9: Measured performance
 

@@ -32,5 +32,7 @@ Drop any PDF/image at `http://localhost:3000`. No configuration required.
 
 ## Known limits
 
-Demo storage is in-memory / local disk (swappable behind interfaces); the default provider returns
-illustrative fixture values; no authentication. See the README for the full list.
+Jobs persist to embedded SQLite on a single Node process. On Vercel the store is best effort per
+isolate (each isolate has its own `/tmp` and in-process fan-out). Retention is still unbounded. The
+default provider returns illustrative fixture values. No authentication. See the README for the
+full list.

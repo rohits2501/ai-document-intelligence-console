@@ -94,6 +94,8 @@ export const JobEventData = z.object({
   failed: z.array(z.string()).optional(),
   error: z.string().optional(),
   message: z.string().optional(),
+  /** Distinguishes retries in the append only log (spec 0005 AC-9). 1 on first queued. */
+  attempt: z.number().int().positive().optional(),
 });
 export type JobEventData = z.infer<typeof JobEventData>;
 

@@ -5,37 +5,70 @@ import {
   type DocumentStore,
   type JobStore,
 } from "./store";
+import { flags } from "@/flags";
+import { openJobDatabase } from "./db";
+import { SqliteEventLog } from "./sqlite-event-log";
+import { SqliteDocumentStore, SqliteJobStore } from "./sqlite-store";
+import {
+  InMemoryReviewStore,
+  SqliteReviewStore,
+  type ReviewRecord,
+  type ReviewStore,
+  type ReviewedField,
+} from "./review-store";
+
+export type { ReviewRecord, ReviewedField, ReviewStore };
 
 /**
  * Process-wide singletons. In Next.js dev the module graph reloads on edit, so we stash instances
- * on globalThis to keep jobs/events alive across hot reloads. In production these are plain module
- * singletons. Swap these constructors for SQLite/Redis-backed stores later (spec 0002 AC-9).
+ * on globalThis to keep jobs/events alive across hot reloads. Durable SQLite is the default;
+ * NODE_ENV=test or FEATURE_DURABLE_STORE=false selects the in memory store (spec 0005 AC-6).
  */
-export interface ReviewedField {
-  key: string;
-  value: string;
-  approved: boolean;
-}
-export interface ReviewRecord {
-  jobId: string;
-  fields: ReviewedField[];
-  submittedAt: string;
-}
-
 interface Runtime {
   jobs: JobStore;
   documents: DocumentStore;
   eventLog: EventLogStore;
-  reviews: Map<string, ReviewRecord>;
+  reviews: ReviewStore;
 }
 
 const globalForRuntime = globalThis as unknown as { __docIntelRuntime?: Runtime };
 
-export const runtime: Runtime =
-  globalForRuntime.__docIntelRuntime ??
-  (globalForRuntime.__docIntelRuntime = {
-    jobs: new InMemoryJobStore(),
-    documents: new InMemoryDocumentStore(),
-    eventLog: new InMemoryEventLog(),
-    reviews: new Map<string, ReviewRecord>(),
-  });
+function createRuntime(): Runtime {
+  if (!flags.durableStore) {
+    return {
+      jobs: new InMemoryJobStore(),
+      documents: new InMemoryDocumentStore(),
+      eventLog: new InMemoryEventLog(),
+      reviews: new InMemoryReviewStore(),
+    };
+  }
+  const db = openJobDatabase();
+  return {
+    jobs: new SqliteJobStore(db),
+    documents: new SqliteDocumentStore(db),
+    eventLog: new SqliteEventLog(db),
+    reviews: new SqliteReviewStore(db),
+  };
+}
+
+function getRuntime(): Runtime {
+  if (!globalForRuntime.__docIntelRuntime) {
+    globalForRuntime.__docIntelRuntime = createRuntime();
+  }
+  return globalForRuntime.__docIntelRuntime;
+}
+
+export const runtime: Runtime = {
+  get jobs() {
+    return getRuntime().jobs;
+  },
+  get documents() {
+    return getRuntime().documents;
+  },
+  get eventLog() {
+    return getRuntime().eventLog;
+  },
+  get reviews() {
+    return getRuntime().reviews;
+  },
+};

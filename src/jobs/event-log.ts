@@ -1,5 +1,16 @@
 import type { JobEvent, JobEventType, JobEventData } from "./types";
 
+/** Next attempt number for a fresh queued event (spec 0005 AC-9). */
+export function nextQueuedAttempt(existing: readonly JobEvent[]): number {
+  let max = 0;
+  for (const event of existing) {
+    if (event.type !== "queued") continue;
+    const n = event.data.attempt;
+    if (typeof n === "number" && n > max) max = n;
+  }
+  return max + 1;
+}
+
 /**
  * Append only, ordered event log. The single source of truth for job state.
  * The SSE connection is a disposable cursor over this log (see spec 0002, AC-3/AC-5).
@@ -22,12 +33,16 @@ export class InMemoryEventLog implements EventLogStore {
 
   append(jobId: string, type: JobEventType, data: JobEventData = {}): JobEvent {
     const log = this.events.get(jobId) ?? [];
+    const payload =
+      type === "queued" && data.attempt === undefined
+        ? { ...data, attempt: nextQueuedAttempt(log) }
+        : data;
     const event: JobEvent = {
       id: log.length + 1, // 1-based monotonic per job
       jobId,
       type,
       ts: new Date().toISOString(),
-      data,
+      data: payload,
     };
     log.push(event);
     this.events.set(jobId, log);
