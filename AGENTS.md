@@ -64,8 +64,9 @@ Default tier Alpha (`/develop` then `/check verify`). Stack & architecture and t
 
 ## Agent skills
 
-The nine JS Mastery workflow skills are installed in `.agents/skills/` and govern how work is done:
+The nine JS Mastery workflow skills are installed in `.agents/skills/` and govern how work is done. Start here if unsure which to run:
 
+- `.agents/skills/workflow` — index and router: what each skill is for, the order they run in, and which one to pick next. Reach for this when you do not know where to start.
 - `.agents/skills/scope` — turn an idea into `docs/scope/`.
 - `.agents/skills/audit` — write these `AGENTS.md` files from the real code.
 - `.agents/skills/architect` — make a decision, write it as a spec in `docs/specs/`.

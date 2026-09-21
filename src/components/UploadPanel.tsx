@@ -53,7 +53,7 @@ export function UploadPanel() {
   }
 
   return (
-    <Panel title="Upload a document">
+    <Panel title="Upload a document" tourId="upload-panel" badge="Resumable">
       <div
         onDragOver={(e) => {
           e.preventDefault();

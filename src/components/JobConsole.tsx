@@ -9,6 +9,8 @@ import { isTerminal } from "@/jobs/types";
 import { flags } from "@/flags";
 import { ReviewList } from "./ReviewList";
 import { ErrorBoundary } from "./ErrorBoundary";
+import { Walkthrough } from "@/walkthrough/Walkthrough";
+import { jobTour } from "@/walkthrough/tours";
 
 // react-pdf is browser-only; load the viewer without SSR.
 const DocumentViewer = dynamic(() => import("./DocumentViewer").then((m) => m.DocumentViewer), {
@@ -56,7 +58,10 @@ export function JobConsole({ jobId }: { jobId: string }) {
 
   return (
     <div style={{ display: "grid", gap: "var(--space-4)" }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <div
+        data-tour="job-status"
+        style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}
+      >
         <div style={{ display: "flex", gap: "var(--space-3)", alignItems: "center" }}>
           <Link href="/" style={{ textDecoration: "none" }}>
             ← Back
@@ -82,7 +87,7 @@ export function JobConsole({ jobId }: { jobId: string }) {
         </div>
       </div>
 
-      <Panel title="Progress">
+      <Panel title="Progress" tourId="job-progress" badge="Live SSE">
         <div style={{ display: "grid", gap: "var(--space-2)" }}>
           <ProgressBar value={state.pagesProcessed} max={total || 1} />
           <div style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)" }}>
@@ -99,7 +104,7 @@ export function JobConsole({ jobId }: { jobId: string }) {
       </Panel>
 
       <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: "var(--space-4)" }}>
-        <Panel title="Document">
+        <Panel title="Document" tourId="document-viewer" badge="Virtualized">
           {documentId ? (
             <ErrorBoundary label="The document viewer">
               <DocumentViewer
@@ -115,7 +120,11 @@ export function JobConsole({ jobId }: { jobId: string }) {
           )}
         </Panel>
 
-        <Panel title={`Review fields (${state.fields.length})`}>
+        <Panel
+          title={`Review fields (${state.fields.length})`}
+          tourId="review-list"
+          badge="Human review"
+        >
           <ReviewList
             jobId={jobId}
             fields={state.fields}
@@ -137,7 +146,7 @@ export function JobConsole({ jobId }: { jobId: string }) {
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-4)" }}>
-        <Panel title="Event timeline">
+        <Panel title="Event timeline" tourId="event-timeline">
           <ol
             style={{
               margin: 0,
@@ -158,7 +167,7 @@ export function JobConsole({ jobId }: { jobId: string }) {
         </Panel>
 
         {flags.diagnostics ? (
-          <Panel title="Diagnostics">
+          <Panel title="Diagnostics" tourId="diagnostics-panel" badge="Observability">
             <dl
               style={{
                 margin: 0,
@@ -178,6 +187,8 @@ export function JobConsole({ jobId }: { jobId: string }) {
           </Panel>
         ) : null}
       </div>
+
+      <Walkthrough tour={jobTour} />
     </div>
   );
 }

@@ -9,6 +9,8 @@ export interface Flags {
   diagnostics: boolean;
   /** Allow editing + approving fields in review. When off, review is read-only. */
   reviewEditing: boolean;
+  /** Run the guided product walkthrough (spotlight tour) on the home and job console routes. */
+  walkthrough: boolean;
 }
 
 function bool(value: string | undefined, fallback: boolean): boolean {
@@ -19,4 +21,5 @@ function bool(value: string | undefined, fallback: boolean): boolean {
 export const flags: Flags = {
   diagnostics: bool(process.env.NEXT_PUBLIC_FEATURE_DIAGNOSTICS, true),
   reviewEditing: bool(process.env.NEXT_PUBLIC_FEATURE_REVIEW_EDITING, true),
+  walkthrough: bool(process.env.NEXT_PUBLIC_FEATURE_WALKTHROUGH, true),
 };

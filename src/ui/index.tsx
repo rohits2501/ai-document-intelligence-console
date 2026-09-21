@@ -1,14 +1,13 @@
 "use client";
 
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
 import styles from "./ui.module.css";
 import type { JobStatus } from "@/jobs/types";
 
-export function Button({
-  variant = "default",
-  className,
-  ...rest
-}: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "default" | "primary" | "danger" }) {
+export const Button = forwardRef<
+  HTMLButtonElement,
+  ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "default" | "primary" | "danger" }
+>(function Button({ variant = "default", className, ...rest }, ref) {
   const cls = [
     styles.button,
     variant === "primary" && styles.primary,
@@ -17,20 +16,42 @@ export function Button({
   ]
     .filter(Boolean)
     .join(" ");
-  return <button className={cls} {...rest} />;
-}
+  return <button ref={ref} className={cls} {...rest} />;
+});
 
 export function Card({ children }: { children: ReactNode }) {
   return <div className={styles.card}>{children}</div>;
 }
 
-export function Panel({ title, children }: { title: string; children: ReactNode }) {
+/**
+ * A titled surface. `tourId` sets the `data-tour` hook the walkthrough spotlight targets, and
+ * `badge` flags a notable capability inline in the header.
+ */
+export function Panel({
+  title,
+  children,
+  tourId,
+  badge,
+}: {
+  title: string;
+  children: ReactNode;
+  tourId?: string;
+  badge?: string;
+}) {
   return (
-    <section className={styles.panel}>
-      <header className={styles.panelHeader}>{title}</header>
+    <section className={styles.panel} data-tour={tourId}>
+      <header className={styles.panelHeader}>
+        <span>{title}</span>
+        {badge ? <FeatureBadge label={badge} /> : null}
+      </header>
       <div className={styles.panelBody}>{children}</div>
     </section>
   );
+}
+
+/** Small pill that flags a notable capability (e.g. "Resumable", "Virtualized"). */
+export function FeatureBadge({ label }: { label: string }) {
+  return <span className={styles.featureBadge}>{label}</span>;
 }
 
 const STATUS_COLOR: Record<JobStatus, string> = {

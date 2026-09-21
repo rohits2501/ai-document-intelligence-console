@@ -29,7 +29,7 @@ export function JobList() {
   }, []);
 
   return (
-    <Panel title="Recent jobs">
+    <Panel title="Recent jobs" tourId="job-list" badge="Live">
       {jobs.length === 0 ? (
         <p style={{ color: "var(--text-muted)", margin: 0 }}>
           No jobs yet. Upload a document to start one.

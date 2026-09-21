@@ -10,6 +10,10 @@
   --text-muted: #93a1b5;
   --accent: #4f8cff;
   --accent-contrast: #ffffff;
+  --accent-soft: rgba(79, 140, 255, 0.16);
+
+  /* overlay scrim for the walkthrough spotlight */
+  --scrim: rgba(3, 6, 12, 0.72);
 
   /* status */
   --status-queued: #64748b;

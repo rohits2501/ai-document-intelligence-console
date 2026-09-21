@@ -1,5 +1,7 @@
 import { UploadPanel } from "@/components/UploadPanel";
 import { JobList } from "@/components/JobList";
+import { Walkthrough } from "@/walkthrough/Walkthrough";
+import { homeTour } from "@/walkthrough/tours";
 
 export default function HomePage() {
   return (
@@ -17,6 +19,7 @@ export default function HomePage() {
         <UploadPanel />
         <JobList />
       </div>
+      <Walkthrough tour={homeTour} />
     </main>
   );
 }
