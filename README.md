@@ -6,12 +6,7 @@ document viewer.
 
 Built on
 [Sarvam AI's Doc AI product](https://docs.sarvam.ai/api/api-guides-tutorials/document-intelligence/overview)
-(Sarvam Vision 1.5): the job model, statuses, and result shape mirror the real API, so the console
-maps 1:1 onto the target domain.
-
-> Extraction runs on a **mock provider by default** — the app runs with zero keys and never claims
-> production OCR/media capability. A real Sarvam Doc AI provider is wired behind the same interface
-> and activated by env when a key is present.
+(Sarvam Vision 1.5)
 
 ## Why this project
 
