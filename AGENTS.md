@@ -27,15 +27,22 @@ The AI Document Intelligence Console: an operator console for long running docum
 ## Layout
 
 - `app/` — App Router pages and route handlers.
-  - `app/api/jobs/` — create job, SSE events, cancel, retry.
-  - `app/api/upload/` — upload endpoints.
+  - `app/page.tsx`, `app/jobs/[id]/page.tsx` — home (upload + job list) and job console.
+  - `app/api/jobs/` — create/list jobs, single job, SSE events, cancel, retry, review.
+  - `app/api/upload/` — whole-file upload plus chunked `init`/`chunk`/`complete`.
+  - `app/api/documents/[id]/file/` — stream stored document bytes to the viewer.
 - `src/` — non route code, imported via the `@/*` path alias.
-  - `src/jobs/` — job state machine + append only event log (the source of truth).
-  - `src/upload/` — chunked, resumable upload client.
-  - `src/viewer/` — virtualized document viewer.
-  - `src/extraction/` — provider interface: `mock` | `sarvam-docai`.
-  - `src/telemetry/` — structured logging + spans + correlation ids.
+  - `src/jobs/` — types (zod), append only event log (source of truth), stores, worker, runtime
+    singletons, client job state machine (`job-state.ts`) + `useJobStream` SSE hook.
+  - `src/upload/` — local disk storage, in-memory upload sessions, chunked/resumable client.
+  - `src/extraction/` — provider interface + `mock` and `sarvam-docai` providers + registry.
+  - `src/components/` — `JobConsole`, `DocumentViewer` (virtualized + overlay), `ReviewList`,
+    `UploadPanel`, `JobList`.
+  - `src/ui/` — design-system primitives. `src/telemetry/` — logs/spans/correlation ids.
+  - `src/flags/` — typed feature flags (NEXT_PUBLIC_*).
 - `docs/` — the workflow's durable state (`docs/scope/`, `docs/specs/`, `docs/reviews/`). Not a published site, so files live here directly.
+- `public/pdf.worker.min.mjs` — pdf.js worker served locally (no CDN dependency).
+- `.github/workflows/ci.yml` — CI: lint → typecheck → format:check → test → build.
 
 ## Conventions
 

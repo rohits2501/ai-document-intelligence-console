@@ -21,7 +21,7 @@ _These are recommendations to keep your build orderly, not requirements. Skip an
 | 8 | Extraction overlay | Slice 4 | done |
 | 9 | Human review & approval | Slice 5 | done |
 | 10 | Observability & performance | Slice 6 | done |
-| 11 | Reliability & release | Slice 7 | in-progress |
+| 11 | Reliability & release | Slice 7 | done |
 | 12 | Real extraction provider + media stretch | Deferred | done (provider) |
 
 ## Foundations
@@ -115,13 +115,13 @@ Code in `src/telemetry/`, `src/jobs/worker.ts`, `src/components/JobConsole.tsx` 
 
 ## Slice 7: Reliability & release
 
-### 11. Reliability & release · in-progress
+### 11. Reliability & release · done
 One feature flag gating a slice, CI running lint/typecheck/tests, and a release note. Covers the JD's testing, releases, feature flags, and CI expectations.
 **Done when:** a flag toggles a feature at runtime, CI runs green on push, and a release note describes the change.
 - [x] Feature flags: `src/flags/` gating the Diagnostics panel and review editing, documented in `.env.example`
 - [x] CI: `.github/workflows/ci.yml` runs lint → typecheck → format:check → test → build
 - [x] Test the job machine: `/test` (mock provider + worker: 16 tests total, incl. cancel path)
-- [ ] Release note: `/document release-note` (runs in the final landing step)
+- [x] Release note: `/document` (README + CHANGELOG + `docs/RELEASE_NOTES.md`)
 Code in `src/flags/`, `.github/workflows/ci.yml`
 
 ## Deferred
