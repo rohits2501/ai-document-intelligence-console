@@ -362,6 +362,32 @@ Short primers on the areas the course skips, so you're not blank on the board.
 ### 7.5 i18n for Indic scripts (Sarvam-specific)
 - 23 languages/scripts incl. RTL (Urdu, Sindhi, Kashmiri); complex shaping (Devanagari, Tamil, etc.); font subsetting per script; logical CSS properties; locale-aware number/date; bidi in mixed content; test with real script samples.
 
+### 7.6 Client-side storage & session-replay governance (live Sarvam teardown)
+
+A real finding from inspecting `indus.sarvam.ai` local/session storage - a concrete "privacy & observability" talking point. Observed: Mixpanel + **two** PostHog projects load on one authenticated dashboard; nav/home UI are server-driven via PostHog feature-flag *payloads* (`sidebar_config`, `home_config`) with per-role variants; identity is `user -> identity -> org -> workspace` (UUIDv7) persisted in `sarvam:selected_*` keys.
+
+**Issue 1 - PII in `localStorage`.** PostHog persists person properties (`email`, full `name`) and org/workspace names as plaintext under its `ph_..._posthog` key (default `localStorage+cookie` persistence).
+- Why it matters: `localStorage` is readable by any JS on the origin (XSS, third-party scripts, extensions), can't be `HttpOnly`/`Secure`/`SameSite`, and never expires - so the exposure is an identity + tenancy directory, not just an id.
+- Nuance (to their credit): the auth token was *not* in storage (session lives in an HttpOnly cookie - correct), so the realistic threat is PII/tenancy harvesting and replay linkage, not account takeover.
+- Fix: identify with a pseudonymous id; set email/name server-side; or use `persistence: 'memory'` / a property denylist so PII never lands in `localStorage`.
+
+**Issue 2 - mismatched session-replay policies on one origin.** Masking/capture is a property of each *SDK instance*, not the page. The two PostHog projects ran opposite recording configs:
+
+| Setting | App project (identified) | Marketing project (anonymous) |
+| --- | --- | --- |
+| `maskAllInputs` | true | **false** |
+| `maskTextSelector` | `*` | none |
+| `blockSelector` | `img` | none |
+| network `recordBody` / `recordHeaders` | false / false | **true / true** |
+| `recordCanvas` | false | **true** |
+| `sampleRate` | 0.5 | ~all |
+
+- The app project redacts everything; the marketing project (a global snippet that followed the user past `/login`) records unmasked inputs, canvas pixels, console logs, and network request/response **bodies + headers** - on a page showing real extracted data and PII.
+- Because masking is per-instance, the strict project's redaction does nothing to constrain the lax one. App data can land in a different team's project with weaker masking and different retention - a DPDP/GDPR data-flow smell.
+- Fix: one recorder per surface; stop the marketing snippet at the auth boundary; if both must coexist, force the strict profile (mask inputs, no canvas, `maskNetworkRequestFn` / no body+header capture) on the authenticated origin so privacy is enforced at the *page* level.
+
+**Interview line:** "Masking and capture are per-SDK-instance, so privacy must be enforced at the origin/page level, and third-party recorders must stop at the auth boundary." Applies directly to this console: if replay is ever added, never record network bodies of `app/api/documents/[id]/file` or the review payload.
+
 ---
 
 ## 8. Resource index
