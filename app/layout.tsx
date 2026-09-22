@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ThemeScript } from "@/theme/ThemeScript";
+import { PerfHud } from "@/perf/PerfHud";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -14,6 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <ThemeScript />
         {children}
+        <PerfHud />
       </body>
     </html>
   );

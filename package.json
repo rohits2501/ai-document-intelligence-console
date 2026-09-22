@@ -12,9 +12,11 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "seed:perf": "npx tsx scripts/seed-perf-fixture.ts"
   },
   "dependencies": {
+    "@tanstack/react-pacer": "^0.23.0",
     "@tanstack/react-virtual": "^3.10.8",
     "better-sqlite3": "^12.11.1",
     "next": "^14.2.35",

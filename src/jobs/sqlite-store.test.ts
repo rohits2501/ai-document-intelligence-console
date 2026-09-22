@@ -57,6 +57,42 @@ describe("SqliteDocumentStore and SqliteJobStore (AC-1)", () => {
     expect(new SqliteJobStore(db2).get(job.id)?.documentId).toBe("doc_1");
   });
 
+  it("puts a job with a stable id", () => {
+    const { documents, jobs } = openStores();
+    documents.put({
+      id: "doc_1",
+      name: "a.pdf",
+      sizeBytes: 1,
+      pageCount: null,
+      storageKey: "k",
+      createdAt: "2026-01-01T00:00:00.000Z",
+    });
+    jobs.put({
+      id: "job_stable",
+      documentId: "doc_1",
+      kind: "extract",
+      status: "queued",
+      lastEventId: 0,
+      createdAt: "2026-01-01T00:00:00.000Z",
+      updatedAt: "2026-01-01T00:00:00.000Z",
+      error: null,
+    });
+    expect(jobs.get("job_stable")?.documentId).toBe("doc_1");
+    jobs.put({
+      id: "job_stable",
+      documentId: "doc_1",
+      kind: "digitise",
+      status: "completed",
+      lastEventId: 4,
+      createdAt: "2026-01-01T00:00:00.000Z",
+      updatedAt: "2026-01-02T00:00:00.000Z",
+      error: null,
+    });
+    expect(jobs.get("job_stable")?.kind).toBe("digitise");
+    expect(jobs.get("job_stable")?.kind).toBe("digitise");
+    expect(jobs.get("job_stable")?.lastEventId).toBe(4);
+  });
+
   it("lists jobs newest first", () => {
     const { documents, jobs } = openStores();
     documents.put({

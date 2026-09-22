@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { Button, SourceChip } from "@/ui";
 import { flags } from "@/flags";
 import { groupLabelForKey } from "@/jobs/field-groups";
 import type { ExtractedField } from "@/jobs/types";
+import { patchPerf } from "@/perf/store";
 
 /**
  * Human-in-the-loop review. Fields arrive from the stream; the operator can edit a value, approve
@@ -107,6 +109,33 @@ export function ReviewList({
     return order.map((label) => ({ label, rows: byLabel.get(label) ?? [] }));
   }, [rows]);
 
+  type ListItem =
+    | { kind: "group"; key: string; label: string }
+    | { kind: "row"; key: string; row: RowState };
+
+  const items = useMemo(() => {
+    const out: ListItem[] = [];
+    for (const group of groups) {
+      out.push({ kind: "group", key: `g-${group.label}`, label: group.label });
+      for (const row of group.rows) out.push({ kind: "row", key: row.key, row });
+    }
+    return out;
+  }, [groups]);
+
+  const parentRef = useRef<HTMLDivElement>(null);
+  const virtualizer = useVirtualizer({
+    count: items.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: (index) => (items[index]?.kind === "group" ? 28 : 88),
+    overscan: 8,
+  });
+  const mountedRows = virtualizer.getVirtualItems().filter((item) => items[item.index]?.kind === "row").length;
+
+  useEffect(() => {
+    if (!flags.perfHud) return;
+    patchPerf({ reviewMounted: mountedRows, reviewTotal: rows.length });
+  }, [mountedRows, rows.length]);
+
   function update(key: string, patch: Partial<RowState>) {
     setRows((prev) => prev.map((r) => (r.key === key ? { ...r, ...patch } : r)));
     setSaved(null);
@@ -137,19 +166,33 @@ export function ReviewList({
 
   return (
     <div style={{ display: "grid", gap: "var(--space-3)" }}>
-      {groups.map((group) => (
-        <div key={group.label} style={{ display: "grid", gap: "var(--space-2)" }}>
-          <div
-            style={{
-              fontSize: "var(--text-xs)",
-              color: "var(--text-muted)",
-              textTransform: "uppercase",
-              letterSpacing: "0.04em",
-            }}
-          >
-            {group.label}
-          </div>
-          {group.rows.map((r) => {
+      <div ref={parentRef} style={{ height: 480, overflow: "auto" }}>
+        <div style={{ height: virtualizer.getTotalSize(), position: "relative" }}>
+          {virtualizer.getVirtualItems().map((item) => {
+            const entry = items[item.index];
+            if (!entry) return null;
+            if (entry.kind === "group") {
+              return (
+                <div
+                  key={entry.key}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    transform: `translateY(${item.start}px)`,
+                    fontSize: "var(--text-xs)",
+                    color: "var(--text-muted)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.04em",
+                    padding: "var(--space-1) 0",
+                  }}
+                >
+                  {entry.label}
+                </div>
+              );
+            }
+            const r = entry.row;
             const color =
               r.confidence >= CONFIDENCE_THRESHOLD
                 ? "var(--status-completed)"
@@ -161,6 +204,7 @@ export function ReviewList({
             return (
               <div
                 key={r.key}
+                data-perf="review-row"
                 role="button"
                 tabIndex={0}
                 aria-pressed={isSelected}
@@ -173,6 +217,11 @@ export function ReviewList({
                   }
                 }}
                 style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  transform: `translateY(${item.start}px)`,
                   display: "grid",
                   gridTemplateColumns: "1fr auto",
                   gap: "var(--space-2)",
@@ -249,7 +298,7 @@ export function ReviewList({
             );
           })}
         </div>
-      ))}
+      </div>
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <span style={{ fontSize: "var(--text-xs)", color: "var(--text-muted)" }}>

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { Button, Panel, ProgressBar, StatusBadge } from "@/ui";
@@ -12,6 +13,7 @@ import { ErrorBoundary } from "./ErrorBoundary";
 import { Walkthrough } from "@/walkthrough/Walkthrough";
 import { jobTour } from "@/walkthrough/tours";
 import { ThemeToggle } from "@/theme/ThemeToggle";
+import { patchPerf } from "@/perf/store";
 
 // react-pdf is browser-only; load the viewer without SSR.
 const DocumentViewer = dynamic(() => import("./DocumentViewer").then((m) => m.DocumentViewer), {
@@ -50,6 +52,20 @@ export function JobConsole({ jobId }: { jobId: string }) {
 
   const terminal = isTerminal(state.status);
   const total = state.totalPages ?? 0;
+  const timelineEvents = state.events.filter((e) => e.type !== "heartbeat");
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const timelineVirtualizer = useVirtualizer({
+    count: timelineEvents.length,
+    getScrollElement: () => timelineRef.current,
+    estimateSize: () => 22,
+    overscan: 12,
+  });
+  const eventsMounted = timelineVirtualizer.getVirtualItems().length;
+
+  useEffect(() => {
+    if (!flags.perfHud) return;
+    patchPerf({ eventsMounted, eventsTotal: timelineEvents.length });
+  }, [eventsMounted, timelineEvents.length]);
 
   async function cancel() {
     setActing(true);
@@ -156,23 +172,38 @@ export function JobConsole({ jobId }: { jobId: string }) {
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-4)" }}>
         <Panel title="Event timeline" tourId="event-timeline">
-          <ol
-            style={{
-              margin: 0,
-              paddingLeft: "var(--space-4)",
-              display: "grid",
-              gap: "var(--space-1)",
-            }}
-          >
-            {state.events
-              .filter((e) => e.type !== "heartbeat")
-              .map((e) => (
-                <li key={e.id} style={{ fontSize: "var(--text-sm)" }}>
-                  <span style={{ color: "var(--text-muted)" }}>#{e.id}</span> {e.type}
-                  {e.data.page ? ` (page ${e.data.page}/${e.data.totalPages ?? "?"})` : ""}
-                </li>
-              ))}
-          </ol>
+          <div ref={timelineRef} style={{ height: 280, overflow: "auto" }}>
+            <ol
+              style={{
+                margin: 0,
+                paddingLeft: "var(--space-4)",
+                height: timelineVirtualizer.getTotalSize(),
+                position: "relative",
+              }}
+            >
+              {timelineVirtualizer.getVirtualItems().map((item) => {
+                const e = timelineEvents[item.index];
+                if (!e) return null;
+                return (
+                  <li
+                    key={e.id}
+                    data-perf="event-row"
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      transform: `translateY(${item.start}px)`,
+                      fontSize: "var(--text-sm)",
+                    }}
+                  >
+                    <span style={{ color: "var(--text-muted)" }}>#{e.id}</span> {e.type}
+                    {e.data.page ? ` (page ${e.data.page}/${e.data.totalPages ?? "?"})` : ""}
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
         </Panel>
 
         {flags.diagnostics ? (

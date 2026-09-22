@@ -4,6 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Document, Page, pdfjs } from "react-pdf";
 import type { ExtractedField } from "@/jobs/types";
+import { flags } from "@/flags";
+import { patchPerf } from "@/perf/store";
 
 // Worker is served locally from /public so the viewer works offline (no CDN dependency).
 pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
@@ -54,6 +56,12 @@ export function DocumentViewer({
     estimateSize: () => EST_PAGE_HEIGHT,
     overscan: 2,
   });
+  const virtualCount = virtualizer.getVirtualItems().length;
+
+  useEffect(() => {
+    if (!flags.perfHud) return;
+    patchPerf({ pagesMounted: virtualCount, pagesTotal: numPages });
+  }, [virtualCount, numPages]);
 
   const fieldsByPage = useMemo(() => {
     const map = new Map<number, ExtractedField[]>();
@@ -86,6 +94,58 @@ export function DocumentViewer({
     );
   }
 
+  const pages = (
+    <div
+      style={{
+        height: virtualizer.getTotalSize(),
+        position: "relative",
+        width: PAGE_WIDTH,
+        margin: "0 auto",
+      }}
+    >
+      {virtualizer.getVirtualItems().map((item) => {
+        const pageNumber = item.index + 1;
+        const pageFields = fieldsByPage.get(pageNumber) ?? [];
+        return (
+          <div
+            key={item.key}
+            data-index={item.index}
+            data-perf="page"
+            ref={virtualizer.measureElement}
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              transform: `translateY(${item.start}px)`,
+              width: PAGE_WIDTH,
+              padding: "8px 0",
+            }}
+          >
+            <div style={{ position: "relative", background: "var(--paper)", borderRadius: 2 }}>
+              {failed ? (
+                <PageFrame pageNumber={pageNumber} />
+              ) : (
+                <Page
+                  pageNumber={pageNumber}
+                  width={PAGE_WIDTH}
+                  renderTextLayer={false}
+                  renderAnnotationLayer={false}
+                  loading={<PageFrame pageNumber={pageNumber} />}
+                  error={<PageFrame pageNumber={pageNumber} />}
+                />
+              )}
+              <Overlay
+                fields={pageFields}
+                selectedKey={selectedKey}
+                onSelectField={onSelectField}
+              />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+
   return (
     <div
       ref={parentRef}
@@ -96,65 +156,22 @@ export function DocumentViewer({
         borderRadius: "var(--radius-sm)",
       }}
     >
-      <Document
-        file={fileUrl}
-        onLoadSuccess={(d: { numPages: number }) => {
-          setNumPages(d.numPages);
-          setFailed(false);
-        }}
-        onLoadError={() => setFailed(true)}
-        loading={<ViewerNote text="Loading document…" />}
-        error={null}
-      >
-        <div
-          style={{
-            height: virtualizer.getTotalSize(),
-            position: "relative",
-            width: PAGE_WIDTH,
-            margin: "0 auto",
+      {failed ? (
+        pages
+      ) : (
+        <Document
+          file={fileUrl}
+          onLoadSuccess={(d: { numPages: number }) => {
+            setNumPages(d.numPages);
+            setFailed(false);
           }}
+          onLoadError={() => setFailed(true)}
+          loading={<ViewerNote text="Loading document…" />}
+          error={null}
         >
-          {virtualizer.getVirtualItems().map((item) => {
-            const pageNumber = item.index + 1;
-            const pageFields = fieldsByPage.get(pageNumber) ?? [];
-            return (
-              <div
-                key={item.key}
-                data-index={item.index}
-                ref={virtualizer.measureElement}
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  transform: `translateY(${item.start}px)`,
-                  width: PAGE_WIDTH,
-                  padding: "8px 0",
-                }}
-              >
-                <div style={{ position: "relative", background: "var(--paper)", borderRadius: 2 }}>
-                  {failed ? (
-                    <PageFrame pageNumber={pageNumber} />
-                  ) : (
-                    <Page
-                      pageNumber={pageNumber}
-                      width={PAGE_WIDTH}
-                      renderTextLayer={false}
-                      renderAnnotationLayer={false}
-                      loading={<PageFrame pageNumber={pageNumber} />}
-                      error={<PageFrame pageNumber={pageNumber} />}
-                    />
-                  )}
-                  <Overlay
-                    fields={pageFields}
-                    selectedKey={selectedKey}
-                    onSelectField={onSelectField}
-                  />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </Document>
+          {pages}
+        </Document>
+      )}
     </div>
   );
 }
@@ -175,6 +192,12 @@ function ImageViewer({
   onSelectField: (key: string) => void;
 }) {
   const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    if (!flags.perfHud) return;
+    patchPerf({ pagesMounted: 1, pagesTotal: 1 });
+  }, []);
+
   return (
     <div
       style={{

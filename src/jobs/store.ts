@@ -8,6 +8,8 @@ export interface DocumentStore {
 
 export interface JobStore {
   create(documentId: string, kind: JobKind): Job;
+  /** Insert or replace a full job row. Used by the perf seeder for stable ids. */
+  put(job: Job): void;
   get(id: string): Job | undefined;
   update(id: string, patch: Partial<Job>): Job | undefined;
   list(): Job[];
@@ -40,6 +42,10 @@ export class InMemoryJobStore implements JobStore {
     };
     this.jobs.set(job.id, job);
     return job;
+  }
+
+  put(job: Job): void {
+    this.jobs.set(job.id, job);
   }
 
   get(id: string): Job | undefined {

@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useReducer, useRef, useState } from "react";
+import { useBatchedCallback } from "@tanstack/react-pacer";
 import { JOB_EVENT_TYPES, JobEvent } from "./types";
 import { initialJobState, jobReducer, type JobViewState } from "./job-state";
+import { flags } from "@/flags";
+import { patchPerf, recordSseApply } from "@/perf/store";
 
 /**
- * Subscribe to a job's SSE event stream. EventSource gives us automatic reconnection with
- * Last-Event-ID for free; the reducer is idempotent per event id so replayed events are safe.
- * The connection is a disposable cursor; all durable state lives server-side in the event log.
+ * Subscribe to a job's SSE event stream. Replay bursts are batched to one React update per frame
+ * so a 2k event log does not commit 2k times.
  */
 export function useJobStream(jobId: string | null): {
   state: JobViewState;
@@ -17,28 +19,34 @@ export function useJobStream(jobId: string | null): {
   const [connected, setConnected] = useState(false);
   const esRef = useRef<EventSource | null>(null);
 
+  const applyBatch = useBatchedCallback(
+    (events: JobEvent[]) => {
+      for (const event of events) dispatch(event);
+      if (flags.perfHud) recordSseApply(events.length);
+    },
+    { wait: 16, maxSize: 64, onUnmount: (batcher) => batcher.flush() },
+  );
+
   useEffect(() => {
     if (!jobId) return;
     const es = new EventSource(`/api/jobs/${jobId}/events`);
     esRef.current = es;
 
     es.onopen = () => setConnected(true);
-    es.onerror = () => setConnected(false); // browser will retry with Last-Event-ID
+    es.onerror = () => setConnected(false);
 
     const handle = (raw: MessageEvent) => {
       try {
         const parsed = JobEvent.parse(JSON.parse(raw.data));
-        dispatch(parsed);
+        applyBatch(parsed);
       } catch {
-        // ignore malformed frames (e.g. heartbeats arrive as comments, not data)
+        // ignore malformed frames
       }
     };
 
-    // Server sends named events (`event: <type>`); listen to each known type.
     for (const type of JOB_EVENT_TYPES) {
       es.addEventListener(type, handle as EventListener);
     }
-    // Also catch any default `message` frames.
     es.addEventListener("message", handle as EventListener);
 
     return () => {
@@ -46,7 +54,12 @@ export function useJobStream(jobId: string | null): {
       esRef.current = null;
       setConnected(false);
     };
-  }, [jobId]);
+  }, [jobId, applyBatch]);
+
+  useEffect(() => {
+    if (!flags.perfHud) return;
+    patchPerf({ sseEventCount: state.events.length });
+  }, [state.events.length]);
 
   return { state, connected };
 }

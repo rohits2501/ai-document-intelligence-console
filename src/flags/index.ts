@@ -15,6 +15,8 @@ export interface Flags {
    * selects the in memory store so tests and ephemeral hosts stay clean (spec 0005 AC-6).
    */
   durableStore: boolean;
+  /** On-screen perf HUD and fixture link. Default off; bench builds turn it on. */
+  perfHud: boolean;
 }
 
 function bool(value: string | undefined, fallback: boolean): boolean {
@@ -28,4 +30,5 @@ export const flags: Flags = {
   walkthrough: bool(process.env.NEXT_PUBLIC_FEATURE_WALKTHROUGH, true),
   durableStore:
     process.env.NODE_ENV === "test" ? false : bool(process.env.FEATURE_DURABLE_STORE, true),
+  perfHud: bool(process.env.NEXT_PUBLIC_PERF_HUD, false),
 };

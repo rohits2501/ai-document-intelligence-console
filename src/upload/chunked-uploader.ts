@@ -1,5 +1,7 @@
 "use client";
 
+import { throttle } from "@tanstack/pacer";
+
 /**
  * Resumable chunked uploader (spec: chunked upload slice). Splits a file into fixed-size chunks and
  * uploads them sequentially with retry + backoff. The uploadId is remembered in IndexedDB keyed by
@@ -116,12 +118,15 @@ export async function uploadFileResumable(
   await idbSet(fpKey, uploadId);
 
   let committed = offset;
-  const report = () =>
-    opts.onProgress?.({
-      uploaded: committed,
-      total: file.size,
-      pct: file.size === 0 ? 100 : Math.round((committed / file.size) * 100),
-    });
+  const report = throttle(
+    () =>
+      opts.onProgress?.({
+        uploaded: committed,
+        total: file.size,
+        pct: file.size === 0 ? 100 : Math.round((committed / file.size) * 100),
+      }),
+    { wait: 80, leading: true, trailing: true },
+  );
   report();
 
   while (committed < file.size) {

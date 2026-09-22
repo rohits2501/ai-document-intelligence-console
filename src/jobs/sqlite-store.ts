@@ -115,6 +115,23 @@ export class SqliteJobStore implements JobStore {
     return job;
   }
 
+  put(job: Job): void {
+    this.db
+      .prepare(
+        `INSERT INTO jobs (id, document_id, kind, status, last_event_id, created_at, updated_at, error)
+         VALUES (@id, @documentId, @kind, @status, @lastEventId, @createdAt, @updatedAt, @error)
+         ON CONFLICT(id) DO UPDATE SET
+           document_id = excluded.document_id,
+           kind = excluded.kind,
+           status = excluded.status,
+           last_event_id = excluded.last_event_id,
+           created_at = excluded.created_at,
+           updated_at = excluded.updated_at,
+           error = excluded.error`,
+      )
+      .run(job);
+  }
+
   get(id: string): Job | undefined {
     const row = this.db
       .prepare<{ id: string }, JobRow>(`SELECT * FROM jobs WHERE id = @id`)
