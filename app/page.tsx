@@ -18,7 +18,22 @@ export default function HomePage() {
           }}
         >
           <h1 style={{ fontSize: "var(--text-2xl)", margin: 0 }}>Document Intelligence Console</h1>
-          <ThemeToggle />
+          <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)", flexShrink: 0 }}>
+            <a
+              href="/study.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                color: "var(--text-muted)",
+                fontSize: "var(--text-sm)",
+                textDecoration: "none",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Study plan
+            </a>
+            <ThemeToggle />
+          </div>
         </div>
         <p style={{ color: "var(--text-muted)", margin: 0 }}>
           Upload a document, watch a long running job stream its progress, then review and approve
