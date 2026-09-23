@@ -32,7 +32,7 @@ The dominant forces are all frontend: real time streaming of a server driven job
 | UI runtime | React 18 | Concurrent rendering, Suspense, and the ecosystem for virtualization. |
 | Streaming transport | Native `EventSource` (SSE) over an append only event log; control actions as plain `POST` | Job status is server → client, which is SSE's shape. Cancel/retry are a thin control plane, so they are separate `POST` routes, not a socket. Satisfies AC-4. |
 | Job/event store (demo) | In process, in memory store behind an interface (swappable for SQLite/Redis) | AC-1: zero external services for the demo. The event log is the source of truth; the SSE connection is a disposable cursor over it. |
-| Extraction provider | Provider interface with a `mock` default; real `sarvam-docai` provider addable later | AC-6. Keeps the demo runnable and honest. |
+| Extraction provider | Provider interface with a `mock` default; real `docai` provider addable later | AC-6. Keeps the demo runnable and honest. |
 | Document rendering | `pdfjs-dist` via `react-pdf` | Mature PDF rendering in the browser; page level control needed for virtualization. |
 | Virtualization | `@tanstack/react-virtual` | AC-5. Windowing for pages and long result lists. |
 | Validation/contracts | `zod` | Runtime validation of upload input and provider output; typed contracts. |
@@ -68,16 +68,16 @@ Cross cutting tooling (lint/format/type strictness) is captured by `/audit` and 
 
 ## Follow-up
 
-- Decide the exact job status vocabulary and event schema in spec 0002 (Data model & job/event protocol), aligned to the real Sarvam Doc AI statuses.
-- Add the real `sarvam-docai` provider in the deferred stretch feature.
+- Decide the exact job status vocabulary and event schema in spec 0002 (Data model & job/event protocol), aligned to the real document AI statuses.
+- Add the real `docai` provider in the deferred stretch feature.
 
 ## Rationale
 
-Sarvam's real Doc AI product is a poll based job API (`digitise`/`extract`, poll status). Building an SSE cursor over a durable event log, with polling as a fallback, is the practical architectural trade off the Staff JD asks for. SSE is the correct transport for one directional server → client streaming; a bidirectional WebSocket would be machinery we use ten percent of.
+the real document AI product is a poll based job API (`digitise`/`extract`, poll status). Building an SSE cursor over a durable event log, with polling as a fallback, is the practical architectural trade off the Staff JD asks for. SSE is the correct transport for one directional server → client streaming; a bidirectional WebSocket would be machinery we use ten percent of.
 
 ## References
 
-- Sarvam Document Intelligence Overview: https://docs.sarvam.ai/api/api-guides-tutorials/document-intelligence/overview
-- Sarvam Digitise / Extract job API: https://docs.sarvam.ai/api-reference/doc-ai/job/digitise , https://docs.sarvam.ai/api-reference/doc-ai/job/extract
+- Document intelligence overview:
+- Digitise / Extract job API:  ,
 - SSE vs WebSockets for AI streaming: https://dreaming.press/posts/streaming-ai-agent-output-sse-vs-websockets.html , https://getstream.io/blog/websocket-sse/
 - AI SDK resume vs abort incompatibility: https://ai-sdk.dev/docs/troubleshooting/abort-breaks-resumable-streams

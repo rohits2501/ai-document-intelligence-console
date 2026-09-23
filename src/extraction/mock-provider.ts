@@ -30,7 +30,7 @@ const SAMPLE_FIELDS: Omit<ExtractedField, "page">[] = [
   },
   {
     key: "vendor_name",
-    value: "Sarvam Logistics Pvt Ltd",
+    value: "Northwind Logistics Pvt Ltd",
     confidence: 0.89,
     bbox: box(0.08, 0.2, 0.44, 0.05),
     source: "p1",

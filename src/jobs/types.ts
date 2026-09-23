@@ -2,7 +2,7 @@ import { z } from "zod";
 
 /**
  * Core data model + job/event contract. See docs/specs/0002-data-model-job-event-protocol.md.
- * Status and event vocabulary are aligned to Sarvam Doc AI so the console maps 1:1 to the domain.
+ * Status and event vocabulary are aligned to document AI so the console maps 1:1 to the domain.
  */
 
 export const JOB_STATUSES = [
@@ -53,7 +53,7 @@ export const BBox = z.object({
 });
 export type BBox = z.infer<typeof BBox>;
 
-/** Mirrors the Sarvam extract `annotations` shape: every leaf has confidence + sources. */
+/** Mirrors the extract `annotations` shape: every leaf has confidence + sources. */
 export const ExtractedField = z.object({
   key: z.string(),
   value: z.string(),

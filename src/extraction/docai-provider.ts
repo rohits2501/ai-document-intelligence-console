@@ -9,19 +9,19 @@ import {
 } from "./provider";
 
 /**
- * Real Sarvam Doc AI provider (stretch). It speaks the same ProviderEvent language as the mock, so
+ * Real document AI provider (stretch). It speaks the same ProviderEvent language as the mock, so
  * the event log, SSE endpoint, and UI are unchanged when it is selected (spec 0002 AC-7).
  *
- * Sarvam Doc AI is a poll-based job API: create a job (digitise/extract), then poll status until a
+ * document AI is a poll-based job API: create a job (digitise/extract), then poll status until a
  * terminal state, then fetch results. This provider bridges that poll model onto our push/event
  * model — exactly the "own the event cursor over a poll API" trade-off the console demonstrates.
  *
- * API (https://docs.sarvam.ai/api-reference/doc-ai/job/extract):
+ * API :
  *   POST /doc-ai/v1/job/digitise | /extract   (multipart file, header api-subscription-key)
  *   GET  /doc-ai/v1/job/{job_id}/status        -> { status, pages_processed, ... }
  *   GET  /doc-ai/v1/job/{job_id}/results       -> { result, annotations }  (leaves carry confidence+sources)
  *
- * Selected only when EXTRACTION_PROVIDER=sarvam-docai and SARVAM_API_KEY is set; the mock stays the
+ * Selected only when EXTRACTION_PROVIDER=docai and DOCAI_API_KEY is set; the mock stays the
  * default so the demo runs with no keys.
  */
 const TERMINAL = new Set(["completed", "partially_completed", "failed", "rejected"]);
@@ -39,18 +39,21 @@ interface StatusResponse {
   pages_total?: number;
 }
 
-export class SarvamDocAiProvider implements ExtractionProvider {
-  readonly name = "sarvam-docai";
+export class DocAiProvider implements ExtractionProvider {
+  readonly name = "docai";
   private readonly baseUrl: string;
   private readonly apiKey: string;
   private readonly pollMs: number;
 
   constructor() {
-    this.baseUrl = process.env.SARVAM_BASE_URL ?? "https://api.sarvam.ai";
-    this.apiKey = process.env.SARVAM_API_KEY ?? "";
-    this.pollMs = Number.parseInt(process.env.SARVAM_POLL_MS ?? "1500", 10);
+    this.baseUrl = process.env.DOCAI_BASE_URL ?? "";
+    this.apiKey = process.env.DOCAI_API_KEY ?? "";
+    this.pollMs = Number.parseInt(process.env.DOCAI_POLL_MS ?? "1500", 10);
     if (!this.apiKey) {
-      throw new Error("SARVAM_API_KEY is required for the sarvam-docai provider");
+      throw new Error("DOCAI_API_KEY is required for the docai provider");
+    }
+    if (!this.baseUrl) {
+      throw new Error("DOCAI_BASE_URL is required for the docai provider");
     }
   }
 
@@ -89,7 +92,7 @@ export class SarvamDocAiProvider implements ExtractionProvider {
 
       if (TERMINAL.has(status.status)) {
         if (status.status === "failed" || status.status === "rejected") {
-          yield { type: "failed", error: `sarvam job ${status.status}` };
+          yield { type: "failed", error: `docai job ${status.status}` };
           return;
         }
         // completed or partially_completed: fetch and map results
@@ -118,7 +121,7 @@ export class SarvamDocAiProvider implements ExtractionProvider {
     const form = new FormData();
     form.append("file", new Blob([new Uint8Array(bytes)]), doc.name);
     form.append("output_format", "json");
-    if (schema) form.append("schema", JSON.stringify(toSarvamSchema(schema)));
+    if (schema) form.append("schema", JSON.stringify(toDocAiSchema(schema)));
 
     const path = schema ? "/doc-ai/v1/job/extract" : "/doc-ai/v1/job/digitise";
     const res = await fetch(`${this.baseUrl}${path}`, {
@@ -127,7 +130,7 @@ export class SarvamDocAiProvider implements ExtractionProvider {
       body: form,
       signal,
     });
-    if (!res.ok) throw new Error(`sarvam ${path} failed (${res.status})`);
+    if (!res.ok) throw new Error(`docai ${path} failed (${res.status})`);
     return (await res.json()) as StartJobResponse;
   }
 
@@ -136,7 +139,7 @@ export class SarvamDocAiProvider implements ExtractionProvider {
       headers: { "api-subscription-key": this.apiKey },
       signal,
     });
-    if (!res.ok) throw new Error(`sarvam status failed (${res.status})`);
+    if (!res.ok) throw new Error(`docai status failed (${res.status})`);
     return (await res.json()) as StatusResponse;
   }
 
@@ -149,14 +152,14 @@ export class SarvamDocAiProvider implements ExtractionProvider {
       headers: { "api-subscription-key": this.apiKey },
       signal,
     });
-    if (!res.ok) throw new Error(`sarvam results failed (${res.status})`);
+    if (!res.ok) throw new Error(`docai results failed (${res.status})`);
     const body = (await res.json()) as { result?: unknown; annotations?: unknown };
     return mapAnnotations(body.result, body.annotations);
   }
 }
 
-/** Build a Sarvam extract schema (root object with typed, described properties) from our schema. */
-function toSarvamSchema(schema: ExtractSchema) {
+/** Build an extract schema (root object with typed, described properties) from our schema. */
+function toDocAiSchema(schema: ExtractSchema) {
   const properties: Record<string, { type: string; description: string }> = {};
   for (const f of schema) {
     properties[f.key] = { type: "string", description: f.description || f.key };
@@ -164,17 +167,17 @@ function toSarvamSchema(schema: ExtractSchema) {
   return { type: "object", properties };
 }
 
-interface SarvamSource {
+interface DocAiSource {
   page?: number;
   bbox?: { x?: number; y?: number; w?: number; h?: number } | number[];
 }
-interface SarvamAnnotation {
+interface DocAiAnnotation {
   confidence?: number;
-  sources?: SarvamSource[];
+  sources?: DocAiSource[];
 }
 
 /**
- * Flatten Sarvam's { result, annotations } into our ExtractedField[]. Annotations mirror the result
+ * Flatten the { result, annotations } into our ExtractedField[]. Annotations mirror the result
  * shape; each leaf carries `confidence` and `sources`. We read top-level string leaves (the schema
  * we send is a flat object) and pull confidence + the first source's page/bbox.
  */
@@ -183,7 +186,7 @@ export function mapAnnotations(result: unknown, annotations: unknown): Extracted
   const resultObj = result as Record<string, unknown>;
   const annObj = (annotations && typeof annotations === "object" ? annotations : {}) as Record<
     string,
-    SarvamAnnotation
+    DocAiAnnotation
   >;
 
   const fields: ExtractedField[] = [];
@@ -204,7 +207,7 @@ export function mapAnnotations(result: unknown, annotations: unknown): Extracted
 }
 
 function normalizeBBox(
-  bbox: SarvamSource["bbox"],
+  bbox: DocAiSource["bbox"],
 ): { x: number; y: number; w: number; h: number } | null {
   if (!bbox) return null;
   if (Array.isArray(bbox)) {

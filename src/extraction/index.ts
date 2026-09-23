@@ -1,10 +1,10 @@
 import type { ExtractionProvider } from "./provider";
 import { MockExtractionProvider } from "./mock-provider";
-import { SarvamDocAiProvider } from "./sarvam-provider";
+import { DocAiProvider } from "./docai-provider";
 
 /**
  * Provider registry. Default is the mock provider so the app runs with no keys. The real
- * `sarvam-docai` provider is selected by env, and because both speak ProviderEvents, swapping never
+ * `docai` provider is selected by env, and because both speak ProviderEvents, swapping never
  * touches the log, the SSE endpoint, or the UI (spec 0002 AC-7).
  */
 type ProviderFactory = () => ExtractionProvider;
@@ -12,7 +12,7 @@ type ProviderFactory = () => ExtractionProvider;
 const defaultFactory: ProviderFactory = () => new MockExtractionProvider();
 const providers: Record<string, ProviderFactory> = {
   mock: defaultFactory,
-  "sarvam-docai": () => new SarvamDocAiProvider(),
+  docai: () => new DocAiProvider(),
 };
 
 export function registerProvider(name: string, factory: ProviderFactory): void {

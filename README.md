@@ -5,8 +5,8 @@ progress live, then review, edit, and approve the extracted fields over a large,
 document viewer.
 
 Built on
-[Sarvam AI's Doc AI product](https://docs.sarvam.ai/api/api-guides-tutorials/document-intelligence/overview)
-(Sarvam Vision 1.5)
+the document AI product
+(the vision model)
 
 ## Why this project
 
@@ -17,7 +17,7 @@ partially-failing work**:
 - **SSE** is a *disposable cursor* over that log: reconnect with `Last-Event-ID` replays missed
   events gap-free, then follows live. Refresh, multi-tab, and flaky networks all "just work".
 - **Cancel/retry** live on a separate HTTP control plane, never on the stream.
-- Extraction is **pluggable**: mock ↔ real Sarvam Doc AI with no change to the log, the stream, or
+- Extraction is **pluggable**: mock ↔ real document AI with no change to the log, the stream, or
   the UI.
 
 ## Run it
@@ -55,16 +55,16 @@ Upload (chunked, resumable)
 
 - **Data plane** (server → client): `GET /api/jobs/:id/events` (SSE).
 - **Control plane** (client → server): `POST /api/jobs/:id/{cancel,retry}`, `POST /api/jobs`.
-- **Provider interface**: `src/extraction/provider.ts` (mock | sarvam-docai).
+- **Provider interface**: `src/extraction/provider.ts` (mock | docai).
 - Full design decisions live in [`docs/specs/`](docs/specs/); the living plan is in
   [`docs/scope/scope.md`](docs/scope/scope.md).
 
-### Job lifecycle & statuses (aligned to Sarvam Doc AI)
+### Job lifecycle & statuses (aligned to document AI)
 
 `queued → processing → (completed | partially_completed | failed | rejected)`
 
 Extracted fields carry `confidence` and `sources` (page + normalized bounding box), mirroring the
-Sarvam `extract` `annotations` shape.
+`extract` `annotations` shape.
 
 ## How this maps to the Staff Frontend JD
 
@@ -79,7 +79,7 @@ Sarvam `extract` `annotations` shape.
 | **Type safety & contracts** | End-to-end TypeScript strict (`noUncheckedIndexedAccess`) with Zod runtime validation on every boundary — `src/jobs/types.ts` |
 | **Observability / debugging in prod** | Structured JSON logs, `span()` timing, correlation ids (`request_id`/`job_id`/`document_id`), and a console Diagnostics panel — `src/telemetry/`, `JobConsole` |
 | **Testing, CI, feature flags, releases** | Vitest suite on the job machine; GitHub Actions running lint→typecheck→format→test→build; typed feature flags gating features at runtime — `.github/workflows/ci.yml`, `src/flags/` |
-| **Integrating with model/AI APIs** | Pluggable provider; real Sarvam Doc AI provider bridging a poll-based job API onto the push/event model — `src/extraction/sarvam-provider.ts` |
+| **Integrating with model/AI APIs** | Pluggable provider; real document AI provider bridging a poll-based job API onto the push/event model — `src/extraction/docai-provider.ts` |
 
 ## Tech
 

@@ -2,7 +2,7 @@ import type { DocumentRecord, ExtractedField } from "@/jobs/types";
 
 /**
  * Extraction provider interface (spec 0002 AC-7). A `mock` provider is the default; a real
- * `sarvam-docai` provider is a drop-in. Providers emit ProviderEvents; the worker maps them to
+ * `docai` provider is a drop-in. Providers emit ProviderEvents; the worker maps them to
  * JobEvents on the log. Swapping a provider never touches the log, the SSE endpoint, or the UI.
  */
 export type ProviderEvent =

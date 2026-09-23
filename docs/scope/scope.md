@@ -114,7 +114,7 @@ Code in `src/components/ReviewList.tsx`, `app/api/jobs/[id]/review`
 ### 10. Observability & performance · done
 Correlation ids across upload → job → events, structured logs and spans, and a client diagnostics surface.
 **Done when:** every request carries `request_id`/`job_id`/`document_id`, spans cover the job run, and the console exposes correlation ids for debugging.
-- [x] Build it: `/develop observability` (structured JSON logs + `span()` around the job run + console Diagnostics panel)
+- [x] Build it: `/develop observability` (structured JSON logs + `span` around the job run + console Diagnostics panel)
 - [x] Verify it: logs carry job_id/document_id; Diagnostics panel shows ids, stream state, last_event_id, event count
 Code in `src/telemetry/`, `src/jobs/worker.ts`, `src/components/JobConsole.tsx` (Diagnostics)
 
@@ -175,13 +175,13 @@ The operator picks or pastes an extract schema when creating a job, so extract i
 Out of scope for the current build pass, kept so the plan stays honest.
 
 ### 12. Real extraction provider + media stretch · done (provider)
-Wire the real Sarvam Doc AI provider behind the extraction interface. The optional PDF→podcast/TTS media slice is intentionally not built (never claim production media experience).
+Wire the real document AI provider behind the extraction interface. The optional PDF→podcast/TTS media slice is intentionally not built (never claim production media experience).
 **Done when:** the real provider runs behind the same interface when a key is present, and the mock stays the default.
-- [x] Build it: `/develop real extraction provider` (`SarvamDocAiProvider` — poll status → push events, annotation mapping)
+- [x] Build it: `/develop real extraction provider` (`DocAiProvider` — poll status → push events, annotation mapping)
 - [x] Test it: `/test` (pure `mapAnnotations` mapping, 3 cases)
-- [x] Design record: spec [0004](../specs/0004-sarvam-docai-provider.md)
+- [x] Design record: spec [0004](../specs/0004-docai-provider.md)
 - [~] Media slice: intentionally out of scope
-Code in `src/extraction/sarvam-provider.ts`
+Code in `src/extraction/docai-provider.ts`
 
 - **Store retention and bounding**: prune jobs and their events past a count or age, to fully close review 0001's unbounded store finding · from spec 0005 · needs a decision
 - **Acrobat complete editor**: full annotation/editing suite · out of scope

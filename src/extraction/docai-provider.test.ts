@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { mapAnnotations } from "./sarvam-provider";
+import { mapAnnotations } from "./docai-provider";
 
-describe("mapAnnotations (Sarvam Doc AI results → ExtractedField[])", () => {
+describe("mapAnnotations (document AI results → ExtractedField[])", () => {
   it("maps flat leaves with confidence, page, and object bbox from the first source", () => {
     const result = { invoice_number: "INV-1", total: "100" };
     const annotations = {

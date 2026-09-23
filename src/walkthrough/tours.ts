@@ -46,7 +46,7 @@ export const jobTour: Tour = {
       target: "job-status",
       badge: "At a glance",
       title: "Job status and controls",
-      body: "The current status and the cancel or retry controls live here. Status maps directly to the Sarvam Doc AI job lifecycle, including partially completed.",
+      body: "The current status and the cancel or retry controls live here. Status maps directly to the document AI job lifecycle, including partially completed.",
       placement: "bottom",
     },
     {

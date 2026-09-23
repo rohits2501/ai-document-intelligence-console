@@ -10,7 +10,7 @@ The AI Document Intelligence Console: an operator console for long running docum
 
 - Next.js 14 (App Router) + React 18, TypeScript strict.
 - Streaming: native `EventSource` (SSE) over an append only event log; control actions (`cancel`, `retry`) are plain `POST` route handlers.
-- Extraction is behind a provider interface; a `mock` provider is the default, a real `sarvam-docai` provider is optional.
+- Extraction is behind a provider interface; a `mock` provider is the default, a real `docai` provider is optional.
 - Document rendering: `pdfjs-dist` via `react-pdf`; virtualization via `@tanstack/react-virtual` (added in the slices that use them).
 - Validation: `zod`. Client job state: `zustand`.
 - Tests: `vitest`.
@@ -35,7 +35,7 @@ The AI Document Intelligence Console: an operator console for long running docum
   - `src/jobs/` — types (zod), append only event log (source of truth), stores, worker, runtime
     singletons, client job state machine (`job-state.ts`) + `useJobStream` SSE hook.
   - `src/upload/` — local disk storage, in-memory upload sessions, chunked/resumable client.
-  - `src/extraction/` — provider interface + `mock` and `sarvam-docai` providers + registry.
+  - `src/extraction/` — provider interface + `mock` and `docai` providers + registry.
   - `src/components/` — `JobConsole`, `DocumentViewer` (virtualized + overlay), `ReviewList`,
     `UploadPanel`, `JobList`.
   - `src/ui/` — design-system primitives. `src/telemetry/` — logs/spans/correlation ids.
@@ -50,7 +50,7 @@ The AI Document Intelligence Console: an operator console for long running docum
 - Import internal modules via the `@/` alias (`@/jobs/...`), not long relative paths.
 - The event log is the source of truth. The SSE connection is a disposable cursor over it: never store job state only in the connection. Every event carries a monotonic `id`; clients reconnect with `Last-Event-ID` and replay.
 - Cancel and retry are HTTP `POST`, never carried on the stream.
-- Extraction output shape mirrors the real Sarvam Doc AI contract: results carry `text`/`tag`/bounding box; extracted fields carry `confidence` and `sources`. Job statuses: `queued`, `processing`, `partially_completed`, `completed`, `failed`, `rejected`.
+- Extraction output shape mirrors the real document AI contract: results carry `text`/`tag`/bounding box; extracted fields carry `confidence` and `sources`. Job statuses: `queued`, `processing`, `partially_completed`, `completed`, `failed`, `rejected`.
 - Every request/job carries correlation ids: `request_id`, `job_id`, `document_id`.
 - Do not claim production OCR/media experience anywhere; the default provider is a mock and the app says so.
 

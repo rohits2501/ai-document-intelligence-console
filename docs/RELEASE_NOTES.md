@@ -2,7 +2,7 @@
 
 **AI Document Intelligence Console** — first release.
 
-An operator console for long-running document AI jobs, modeled on Sarvam Doc AI. Upload a document,
+An operator console for long-running document AI jobs, modeled on document AI. Upload a document,
 watch the job stream live, and review/approve extracted fields on a virtualized viewer.
 
 ## Highlights
@@ -17,7 +17,7 @@ watch the job stream live, and review/approve extracted fields on a virtualized 
 - **Human-in-the-loop review.** Edit values, approve or flag, with low-confidence fields pre-flagged;
   edits persist and survive late-arriving results.
 - **Resumable uploads.** Chunked with retry/backoff, cancel, and resume-after-reload.
-- **Pluggable extraction.** Mock provider by default (no keys); real Sarvam Doc AI provider behind
+- **Pluggable extraction.** Mock provider by default (no keys); real document AI provider behind
   the same interface.
 - **Production hygiene.** Strict TypeScript + Zod contracts, structured logs with correlation ids,
   feature flags, and CI running lint/typecheck/format/test/build.

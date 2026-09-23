@@ -19,7 +19,7 @@ Initial build of the AI Document Intelligence Console.
 - **Foundations**
   - Next.js 14 App Router + TypeScript (strict, `noUncheckedIndexedAccess`) scaffold.
   - Tooling: ESLint (next), Prettier, EditorConfig, Vitest.
-  - Data model & job/event protocol aligned to Sarvam Doc AI (spec 0002): `Document`, `Job`,
+  - Data model & job/event protocol aligned to document AI (spec 0002): `Document`, `Job`,
     append-only `JobEvent` log, `ExtractedField` (confidence + sources + bbox), `ExtractionProvider`.
   - Design system (spec 0003): CSS-variable tokens + `Button`, `Card`, `Panel`, `StatusBadge`,
     `ProgressBar`, `FieldRow` with focus/keyboard/AA contrast.
@@ -32,10 +32,10 @@ Initial build of the AI Document Intelligence Console.
 - **Extraction overlay**: normalized bounding boxes, confidence-colored, click-to-select both ways.
 - **Human review & approval**: editable field values, approve/flag, low-confidence pre-flagged,
   persisted and restorable; edits survive late partial results.
-- **Observability**: structured JSON logs, `span()` timing, correlation ids, console Diagnostics.
+- **Observability**: structured JSON logs, `span` timing, correlation ids, console Diagnostics.
 - **Reliability & release**: typed feature flags; GitHub Actions CI (lint → typecheck → format →
   test → build); Vitest coverage of the job machine (event log, reducer, worker, providers).
-- **Real Sarvam Doc AI provider** (stretch, spec 0004): bridges the poll-based job API onto the
+- **Real document AI provider** (stretch, spec 0004): bridges the poll-based job API onto the
   push/event model behind the same interface; mock stays the default.
 
 ### Security
