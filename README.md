@@ -66,7 +66,10 @@ Upload (chunked, resumable)
 Extracted fields carry `confidence` and `sources` (page + normalized bounding box), mirroring the
 `extract` `annotations` shape.
 
-## How this maps to the Staff Frontend JD
+<img width="1172" height="777" alt="image" src="https://github.com/user-attachments/assets/67d8bf00-de5d-426a-9651-89a5e7c5503b" />
+
+
+## How this maps
 
 | JD signal | Where it lives here |
 |---|---|
