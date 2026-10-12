@@ -81,12 +81,15 @@ Extracted fields carry `confidence` and `sources` (page + normalized bounding bo
 | **Testing, CI, feature flags, releases** | Vitest suite on the job machine; GitHub Actions running lint→typecheck→format→test→build; typed feature flags gating features at runtime — `.github/workflows/ci.yml`, `src/flags/` |
 | **Integrating with model/AI APIs** | Pluggable provider; real document AI provider bridging a poll-based job API onto the push/event model — `src/extraction/docai-provider.ts` |
 
+<img width="1145" height="780" alt="image" src="https://github.com/user-attachments/assets/fedceb19-035a-4f42-aa80-84aae8be80ed" />
+
+
 ## Tech
 
 Next.js 14 (App Router), React 18, TypeScript (strict), SSE via native `EventSource`, Zod, Zustand,
 `@tanstack/react-virtual`, `react-pdf`/`pdfjs-dist`, `better-sqlite3`, Vitest.
 
-## Notes & honest limits
+## Notes & limits
 
 - Jobs, events, documents, and reviews persist to an embedded SQLite file (`<dataDir>/doc-intel.db`)
   on a **single Node process** (local or self-hosted). `DATA_DIR` selects the data root, then
