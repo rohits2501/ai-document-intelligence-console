@@ -31,3 +31,6 @@ yarn-error.log*
 .data/
 uploads/
 coverage/
+
+# private study notes, kept on disk and off the public tree
+docs/interview-prep/

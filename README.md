@@ -1,12 +1,12 @@
 # AI Document Intelligence Console
 
+**Live:** [ai-document-intelligence-console.vercel.app](https://ai-document-intelligence-console.vercel.app)
+
 An operator console for **long-running document AI jobs**. Drop a document, watch a job stream its
 progress live, then review, edit, and approve the extracted fields over a large, virtualized
 document viewer.
 
-Built on
-the document AI product
-(the vision model)
+Extraction is pluggable. The default provider is a mock, and the UI says so.
 
 ## Why this project
 
@@ -69,9 +69,9 @@ Extracted fields carry `confidence` and `sources` (page + normalized bounding bo
 <img width="1172" height="777" alt="image" src="https://github.com/user-attachments/assets/67d8bf00-de5d-426a-9651-89a5e7c5503b" />
 
 
-## How this maps
+## What the console demonstrates
 
-| JD signal | Where it lives here |
+| What it shows | Where it lives here |
 |---|---|
 | **Real-time interactions / streaming UIs** | SSE data plane over an append-only event log with `Last-Event-ID` replay, heartbeats, and `no-transform` proxy handling — `app/api/jobs/[id]/events/route.ts`, `src/jobs/useJobStream.ts` |
 | **Long-running tasks & partial results** | Job worker streaming `page_processed`/`partial_result`/`partially_completed`; client job state machine derived purely from events — `src/jobs/worker.ts`, `src/jobs/job-state.ts` |
