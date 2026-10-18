@@ -43,7 +43,14 @@ export async function POST(req: NextRequest) {
   });
 }
 
-/** List jobs (newest first) for the console. */
+/** List jobs (newest first) for the console. `documentName` is a list projection, not a job column. */
 export async function GET() {
-  return withStore(() => NextResponse.json({ jobs: store.jobs.list() }));
+  return withStore(() =>
+    NextResponse.json({
+      jobs: store.jobs.list().map((job) => ({
+        ...job,
+        documentName: store.documents.get(job.documentId)?.name ?? null,
+      })),
+    }),
+  );
 }

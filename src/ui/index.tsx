@@ -72,6 +72,11 @@ const STATUS_LABEL: Record<JobStatus, string> = {
   rejected: "Rejected",
 };
 
+/** Same text StatusBadge shows, so filters and badges stay in step. */
+export function statusLabel(status: JobStatus): string {
+  return STATUS_LABEL[status];
+}
+
 /** Status is never color-only: dot + text label (spec 0003 AC-3). */
 export function StatusBadge({ status }: { status: JobStatus }) {
   return (
