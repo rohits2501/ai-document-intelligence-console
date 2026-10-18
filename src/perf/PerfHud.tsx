@@ -3,6 +3,7 @@
 import { useEffect, useSyncExternalStore } from "react";
 import { flags } from "@/flags";
 import { PERF_JOB_ID } from "./ids";
+import { renderBreaches } from "./render-budget";
 import { getPerf, readHeapUsed, patchPerf, subscribePerf } from "./store";
 import styles from "./hud.module.css";
 
@@ -20,6 +21,7 @@ function age(ts: number | null): string {
 
 export function PerfHud() {
   const snap = useSyncExternalStore(subscribePerf, getPerf, getPerf);
+  const breaches = renderBreaches(snap);
 
   useEffect(() => {
     if (!flags.perfHud) return;
@@ -64,6 +66,10 @@ export function PerfHud() {
         </dd>
         <dt>heap</dt>
         <dd>{formatBytes(snap.heapUsed)}</dd>
+        <dt>budget</dt>
+        <dd className={breaches.length > 0 ? styles.over : undefined}>
+          {breaches.length === 0 ? "ok" : breaches.map((breach) => breach.metric).join(" ")}
+        </dd>
       </dl>
       <div className={styles.head} style={{ marginTop: "var(--space-2)", marginBottom: 0 }}>
         <a href={`/jobs/${PERF_JOB_ID}`} style={{ color: "var(--accent)" }}>

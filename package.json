@@ -11,8 +11,10 @@
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "vitest run",
+    "test": "vitest run && node --test scripts/bundle-budget.test.mjs",
     "test:watch": "vitest",
+    "perf:budget": "node scripts/check-bundle-budget.mjs",
+    "postbuild": "node scripts/check-bundle-budget.mjs",
     "seed:perf": "npx tsx scripts/seed-perf-fixture.ts"
   },
   "dependencies": {

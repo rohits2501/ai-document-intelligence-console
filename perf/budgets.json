@@ -1,0 +1,22 @@
+{
+  "routes": [
+    { "path": "/", "baselineBytes": 125045, "maxBytes": 134144 },
+    { "path": "/_not-found", "baselineBytes": 88302, "maxBytes": 97280 },
+    { "path": "/jobs/[id]", "baselineBytes": 128147, "maxBytes": 137216 }
+  ],
+  "assets": [
+    {
+      "path": "public/pdf.worker.min.mjs",
+      "baselineBytes": 437925,
+      "maxBytes": 446464
+    }
+  ],
+  "markers": [
+    {
+      "id": "pdfjs",
+      "contains": "globalThis.pdfjsLib",
+      "baselineBytes": 88776,
+      "maxBytes": 97280
+    }
+  ]
+}

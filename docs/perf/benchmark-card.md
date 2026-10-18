@@ -1,5 +1,7 @@
 # Perf card: naive vs current vs enhanced
 
+Rendering ceilings for this fixture live in `src/perf/field-budgets.ts`. The HUD flags a breach. Gzipped JS is a separate gate: [`budgets.md`](budgets.md).
+
 Fixture: `job_perf-bench` (200 page frames, 500 fields, 2000 events, 102 jobs).
 HUD read after SSE replay settled. Current ran on `:3003` (existing `:3000` was left alone). Naive `:3001`. Enhanced `:3002`.
 

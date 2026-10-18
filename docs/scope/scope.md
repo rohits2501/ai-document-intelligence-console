@@ -24,7 +24,7 @@ _These are recommendations to keep your build orderly, not requirements. Skip an
 | 11 | Reliability & release | Slice 7 | done |
 | 12 | Real extraction provider + media stretch | Deferred | done (provider) |
 | 13 | Durable job store | Slice 8 | in-progress |
-| 16 | Measured performance | Slice 9 | planned |
+| 16 | Measured performance | Slice 9 | done |
 | 17 | Exported observability | Slice 10 | planned |
 | 14 | Operator job queue | Slice 11 | done |
 | 15 | Extract schema on upload | Slice 12 | planned |
@@ -145,10 +145,14 @@ Spec [0005](../specs/0005-durable-job-store/index.md) · code in `src/jobs/`, `s
 
 ## Slice 9: Measured performance
 
-### 16. Measured performance · planned · needs a decision
-Written budgets for loading, rendering, and size, plus a many page document that stays usable on the console. This thickens the viewer you already have. It does not reopen the done Observability & performance row. (basis: a performance budget is a load bearing decision)
+### 16. Measured performance · done
+Written budgets for loading, rendering, and size. The build fails when gzipped first-load JS, the deferred pdf.js chunk, or the pdf worker exceeds its ceiling. The perf HUD flags a rendering breach on the 200-page fixture. This thickens the viewer you already have. It does not reopen the done Observability & performance row.
 **Done when:** written budgets exist, and a many page document stays usable on the job console against those numbers.
-- [ ] Design it (spec): `/architect measured performance`
+- [x] Design it (spec): `/architect measured performance` — [0007](../specs/0007-measured-performance.md)
+- [x] First-load JS, pdf.js, and the pdf worker are gated by `npm run build` — `perf/budgets.json`
+- [x] Rendering ceilings from the enhanced fixture, flagged on the HUD — `src/perf/field-budgets.ts`
+- [x] The enhanced fixture shape passes those ceilings and the naive mount-everything shape does not — `src/perf/render-budget.test.ts`
+Spec [0007](../specs/0007-measured-performance.md) · [budgets](../perf/budgets.md) · code in `perf/budgets.json`, `scripts/check-bundle-budget.mjs`, `src/perf/`
 
 ## Slice 10: Exported observability
 

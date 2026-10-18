@@ -42,7 +42,7 @@ The AI Document Intelligence Console: an operator console for long running docum
   - `src/flags/` — typed feature flags (NEXT_PUBLIC_*).
 - `docs/` — the workflow's durable state (`docs/scope/`, `docs/specs/`, `docs/reviews/`). Not a published site, so files live here directly.
 - `public/pdf.worker.min.mjs` — pdf.js worker served locally (no CDN dependency).
-- `.github/workflows/ci.yml` — CI: lint → typecheck → format:check → test → build.
+- `.github/workflows/ci.yml` — CI: lint → typecheck → format:check → test → build. The build runs the performance budget.
 
 ## Conventions
 
@@ -53,6 +53,7 @@ The AI Document Intelligence Console: an operator console for long running docum
 - Extraction output shape mirrors the real document AI contract: results carry `text`/`tag`/bounding box; extracted fields carry `confidence` and `sources`. Job statuses: `queued`, `processing`, `partially_completed`, `completed`, `failed`, `rejected`.
 - Every request/job carries correlation ids: `request_id`, `job_id`, `document_id`.
 - Do not claim production OCR/media experience anywhere; the default provider is a mock and the app says so.
+- Gzipped first-load JS is gated on every production build. Ceilings live in `perf/budgets.json`. Raise `maxBytes` in the same change that grows a page. Rendering and web-vitals ceilings live in `src/perf/field-budgets.ts`.
 
 ## Build approach
 

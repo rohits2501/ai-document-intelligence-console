@@ -30,7 +30,8 @@ npm run dev      # http://localhost:3000
 Then drop any PDF/image, watch the job stream, and review the extracted fields. No keys needed.
 
 ```bash
-npm run build      # production build
+npm run build        # production build, then the JS budget check
+npm run perf:budget  # re-check .next against perf/budgets.json
 npm run typecheck  # tsc --noEmit (strict)
 npm run lint       # next lint
 npm test           # vitest (job machine, providers)
@@ -76,12 +77,12 @@ Extracted fields carry `confidence` and `sources` (page + normalized bounding bo
 | **Real-time interactions / streaming UIs** | SSE data plane over an append-only event log with `Last-Event-ID` replay, heartbeats, and `no-transform` proxy handling — `app/api/jobs/[id]/events/route.ts`, `src/jobs/useJobStream.ts` |
 | **Long-running tasks & partial results** | Job worker streaming `page_processed`/`partial_result`/`partially_completed`; client job state machine derived purely from events — `src/jobs/worker.ts`, `src/jobs/job-state.ts` |
 | **Cancellation & control** | HTTP control plane separate from the stream; `AbortSignal` threaded through the worker/provider — `app/api/jobs/[id]/{cancel,retry}` |
-| **Large documents / performance** | Virtualized viewer mounting only near-viewport pages via `@tanstack/react-virtual`; pdf.js rendering with graceful frame fallback — `src/components/DocumentViewer.tsx` |
+| **Large documents / performance** | Virtualized viewer; gzipped first-load JS gated in `perf/budgets.json` (home 125.0 kB, job console 128.1 kB, plus an 88.8 kB pdf.js chunk and a 437.9 kB worker). Rendering ceilings on the perf HUD — `docs/perf/budgets.md` |
 | **Complex data-heavy UI + human-in-the-loop** | Confidence-scored fields with bounding-box overlays and an editable review/approve flow that survives late partial results — `DocumentViewer` (Overlay), `ReviewList` |
 | **Robust uploads** | Chunked, resumable upload with per-chunk retry/backoff, cancel, and IndexedDB-backed resume across reloads (server validates offsets, 409 → authoritative offset) — `src/upload/**`, `app/api/upload/**` |
 | **Type safety & contracts** | End-to-end TypeScript strict (`noUncheckedIndexedAccess`) with Zod runtime validation on every boundary — `src/jobs/types.ts` |
 | **Observability / debugging in prod** | Structured JSON logs, `span()` timing, correlation ids (`request_id`/`job_id`/`document_id`), and a console Diagnostics panel — `src/telemetry/`, `JobConsole` |
-| **Testing, CI, feature flags, releases** | Vitest suite on the job machine; GitHub Actions running lint→typecheck→format→test→build; typed feature flags gating features at runtime — `.github/workflows/ci.yml`, `src/flags/` |
+| **Testing, CI, feature flags, releases** | Vitest suite on the job machine; GitHub Actions running lint→typecheck→format→test→build, and the build enforces the JS budget — `.github/workflows/ci.yml`, `perf/budgets.json`, `src/flags/` |
 | **Integrating with model/AI APIs** | Pluggable provider; real document AI provider bridging a poll-based job API onto the push/event model — `src/extraction/docai-provider.ts` |
 
 <img width="1145" height="780" alt="image" src="https://github.com/user-attachments/assets/fedceb19-035a-4f42-aa80-84aae8be80ed" />
