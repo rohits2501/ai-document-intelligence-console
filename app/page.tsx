@@ -20,7 +20,9 @@ export default function HomePage() {
           }}
         >
           <h1 style={{ fontSize: "var(--text-2xl)", margin: 0 }}>Document Intelligence Console</h1>
-          <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)", flexShrink: 0 }}>
+          <div
+            style={{ display: "flex", alignItems: "center", gap: "var(--space-3)", flexShrink: 0 }}
+          >
             <a
               href="/study.html"
               target="_blank"

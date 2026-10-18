@@ -99,7 +99,10 @@ async function main() {
       eventLog.append(PERF_JOB_ID, "page_processed", { page, totalPages: PERF_PAGE_COUNT });
     }
     eventLog.append(PERF_JOB_ID, "partially_completed", {
-      failed: fields.filter((f) => f.confidence < 0.7).slice(0, 8).map((f) => f.key),
+      failed: fields
+        .filter((f) => f.confidence < 0.7)
+        .slice(0, 8)
+        .map((f) => f.key),
     });
     jobs.update(PERF_JOB_ID, { lastEventId: eventLog.latestId(PERF_JOB_ID) });
   }
