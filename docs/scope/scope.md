@@ -26,7 +26,7 @@ _These are recommendations to keep your build orderly, not requirements. Skip an
 | 13 | Durable job store | Slice 8 | in-progress |
 | 16 | Measured performance | Slice 9 | planned |
 | 17 | Exported observability | Slice 10 | planned |
-| 14 | Operator job queue | Slice 11 | in-progress |
+| 14 | Operator job queue | Slice 11 | done |
 | 15 | Extract schema on upload | Slice 12 | planned |
 
 ## Foundations
@@ -159,7 +159,7 @@ Errors and timed spans you can query after a failed job, plus one page health nu
 
 ## Slice 11: Operator job queue
 
-### 14. Operator job queue · in-progress
+### 14. Operator job queue · done
 The home list shows document names and status filters, and updates as jobs move, so an operator can find work without a raw id list that polls every few seconds.
 **Done when:** an operator can filter jobs by status, see the document name, and watch the list update as jobs progress.
 - [x] Build it: `/develop operator job queue`
