@@ -64,9 +64,7 @@ export function recordSseApply(n = 1): void {
 }
 
 export function readHeapUsed(): number | null {
-  const mem = (
-    performance as Performance & { memory?: { usedJSHeapSize: number } }
-  ).memory;
+  const mem = (performance as Performance & { memory?: { usedJSHeapSize: number } }).memory;
   return typeof mem?.usedJSHeapSize === "number" ? mem.usedJSHeapSize : null;
 }
 

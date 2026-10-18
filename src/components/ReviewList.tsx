@@ -129,7 +129,9 @@ export function ReviewList({
     estimateSize: (index) => (items[index]?.kind === "group" ? 28 : 88),
     overscan: 8,
   });
-  const mountedRows = virtualizer.getVirtualItems().filter((item) => items[item.index]?.kind === "row").length;
+  const mountedRows = virtualizer
+    .getVirtualItems()
+    .filter((item) => items[item.index]?.kind === "row").length;
 
   useEffect(() => {
     if (!flags.perfHud) return;
