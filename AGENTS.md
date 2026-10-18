@@ -12,6 +12,7 @@ The AI Document Intelligence Console: an operator console for long running docum
 - Streaming: native `EventSource` (SSE) over an append only event log; control actions (`cancel`, `retry`) are plain `POST` route handlers.
 - Extraction is behind a provider interface; a `mock` provider is the default, a real `docai` provider is optional.
 - Document rendering: `pdfjs-dist` via `react-pdf`; virtualization via `@tanstack/react-virtual` (added in the slices that use them).
+- Styling: CSS variables and `Button` from the house design system (`@house/tokens/theme.css`, `@house/react`); app-specific styles are CSS modules on those variables.
 - Validation: `zod`. Client job state: `zustand`.
 - Tests: `vitest`.
 - Package manager: npm.
@@ -42,7 +43,8 @@ The AI Document Intelligence Console: an operator console for long running docum
   - `src/flags/` — typed feature flags (NEXT_PUBLIC_*).
 - `docs/` — the workflow's durable state (`docs/scope/`, `docs/specs/`, `docs/reviews/`). Not a published site, so files live here directly.
 - `public/pdf.worker.min.mjs` — pdf.js worker served locally (no CDN dependency).
-- `.github/workflows/ci.yml` — CI: lint → typecheck → format:check → test → build. The build runs the performance budget.
+- `vendor/` — packed `@house/tokens` and `@house/react` tarballs (the house design system), installed via `file:vendor/...`.
+- `.github/workflows/ci.yml` — CI: lint → typecheck → format:check → check:colors → test → build. The build runs the performance budget.
 
 ## Conventions
 
@@ -53,6 +55,7 @@ The AI Document Intelligence Console: an operator console for long running docum
 - Extraction output shape mirrors the real document AI contract: results carry `text`/`tag`/bounding box; extracted fields carry `confidence` and `sources`. Job statuses: `queued`, `processing`, `partially_completed`, `completed`, `failed`, `rejected`.
 - Every request/job carries correlation ids: `request_id`, `job_id`, `document_id`.
 - Do not claim production OCR/media experience anywhere; the default provider is a mock and the app says so.
+- Colors come from token roles (`var(--accent)`, `var(--danger)`), never raw hex/rgb. `npm run check:colors` fails on new raw colors; `raw-color-baseline.json` lists legacy files only.
 - Gzipped first-load JS is gated on every production build. Ceilings live in `perf/budgets.json`. Raise `maxBytes` in the same change that grows a page. Rendering and web-vitals ceilings live in `src/perf/field-budgets.ts`.
 
 ## Build approach

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { ThemeScript } from "@/theme/ThemeScript";
 import { PerfHud } from "@/perf/PerfHud";
 import { WebVitals } from "@/perf/WebVitals";
+import "@house/tokens/theme.css";
+import "@house/react/styles.css";
 import "./globals.css";
 
 export const metadata: Metadata = {

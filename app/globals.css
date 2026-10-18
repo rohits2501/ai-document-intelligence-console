@@ -1,76 +1,16 @@
-:root {
-  /* spacing (4px base) */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 24px;
-  --space-6: 32px;
+/* Colors, space, type, and radius come from @house/tokens (imported in app/layout.tsx). */
 
-  /* radius */
-  --radius: 8px;
-  --radius-sm: 4px;
-
-  /* type */
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
-    sans-serif;
-  --text-xs: 12px;
-  --text-sm: 13px;
-  --text-base: 14px;
-  --text-lg: 16px;
-  --text-xl: 20px;
-  --text-2xl: 26px;
-}
-
-/* Warm charcoal palette from public/study.html (html[data-theme="dark"]). */
+/* Console only values with no package role: the PDF page stays white, and overlays need a scrim. */
 [data-theme="dark"] {
-  color-scheme: dark;
-
-  --bg: #242220;
-  --surface: #2c2a27;
-  --surface-2: #33302c;
-  --border: #3d3934;
-  --text: #d6d0c4;
-  --text-strong: #efe9df;
-  --text-muted: #aea79a;
-  --accent: #e0b15f;
-  --accent-contrast: #242220;
-  --accent-soft: rgba(224, 177, 95, 0.16);
-
   --scrim: rgba(20, 18, 16, 0.72);
   --shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
   --paper: #ffffff;
-
-  --status-queued: #aea79a;
-  --status-processing: #e0b15f;
-  --status-partial: #e08a4a;
-  --status-completed: #7dba6a;
-  --status-failed: #e06a5c;
 }
 
 [data-theme="light"] {
-  color-scheme: light;
-
-  --bg: #f3f5f8;
-  --surface: #ffffff;
-  --surface-2: #eef2f7;
-  --border: #d0d7e2;
-  --text: #0f172a;
-  --text-strong: #0f172a;
-  --text-muted: #4b5b70;
-  --accent: #2563eb;
-  --accent-contrast: #ffffff;
-  --accent-soft: rgba(37, 99, 235, 0.12);
-
   --scrim: rgba(15, 23, 42, 0.48);
   --shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
   --paper: #ffffff;
-
-  --status-queued: #64748b;
-  --status-processing: #2563eb;
-  --status-partial: #b45309;
-  --status-completed: #15803d;
-  --status-failed: #dc2626;
 }
 
 * {
@@ -84,11 +24,11 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-sans);
-  font-size: var(--text-base);
+  font-size: var(--font-size-sm);
   line-height: 1.5;
 }
 
-/* Subpixel smoothing keeps body text from looking faint on the warm dark surface. */
+/* Subpixel smoothing keeps body text from looking faint on the dark surface. */
 [data-theme="dark"] body {
   -webkit-font-smoothing: auto;
   -moz-osx-font-smoothing: auto;
@@ -96,8 +36,8 @@ body {
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--accent) 35%, var(--surface-2));
-  color: var(--text-strong);
+  background: color-mix(in srgb, var(--accent) 35%, var(--bg-subtle));
+  color: var(--text);
 }
 
 a {
@@ -105,8 +45,8 @@ a {
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  outline: var(--focus-ring-width) solid var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
   border-radius: var(--radius-sm);
 }
 
@@ -115,5 +55,5 @@ h2,
 h3 {
   line-height: 1.2;
   margin: 0 0 var(--space-3);
-  color: var(--text-strong);
+  color: var(--text);
 }

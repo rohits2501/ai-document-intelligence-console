@@ -83,7 +83,7 @@ export function JobList() {
       ) : null}
 
       {phase === "error" ? (
-        <p role="alert" style={{ color: "var(--status-failed)", margin: 0 }}>
+        <p role="alert" style={{ color: "var(--danger)", margin: 0 }}>
           Could not load jobs. The list will try again.
         </p>
       ) : null}
@@ -164,7 +164,7 @@ export function JobList() {
                           <span
                             title={name}
                             style={{
-                              fontSize: "var(--text-sm)",
+                              fontSize: "var(--font-size-sm)",
                               overflow: "hidden",
                               textOverflow: "ellipsis",
                               whiteSpace: "nowrap",
@@ -174,7 +174,7 @@ export function JobList() {
                           </span>
                           <span
                             style={{
-                              fontSize: "var(--text-xs)",
+                              fontSize: "var(--font-size-xs)",
                               color: "var(--text-muted)",
                               overflow: "hidden",
                               textOverflow: "ellipsis",

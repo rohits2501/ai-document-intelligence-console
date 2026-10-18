@@ -28,6 +28,9 @@ jobs:
       - name: Format check
         run: npm run format:check
 
+      - name: No raw colors outside the baseline
+        run: npm run check:colors
+
       - name: Test
         run: npm test
 
