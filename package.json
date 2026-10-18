@@ -19,8 +19,8 @@
     "check:colors": "house-check-raw-color app src --baseline raw-color-baseline.json"
   },
   "dependencies": {
-    "@house/react": "file:vendor/house-react-0.1.0.tgz",
-    "@house/tokens": "file:vendor/house-tokens-0.1.1.tgz",
+    "@house/react": "file:vendor/house-react-0.2.0.tgz",
+    "@house/tokens": "file:vendor/house-tokens-0.2.0.tgz",
     "@tanstack/react-pacer": "^0.23.0",
     "@tanstack/react-virtual": "^3.10.8",
     "better-sqlite3": "^12.11.1",
