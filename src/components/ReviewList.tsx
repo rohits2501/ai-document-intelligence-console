@@ -183,7 +183,7 @@ export function ReviewList({
                     left: 0,
                     width: "100%",
                     transform: `translateY(${item.start}px)`,
-                    fontSize: "var(--text-xs)",
+                    fontSize: "var(--font-size-xs)",
                     color: "var(--text-muted)",
                     textTransform: "uppercase",
                     letterSpacing: "0.04em",
@@ -197,10 +197,10 @@ export function ReviewList({
             const r = entry.row;
             const color =
               r.confidence >= CONFIDENCE_THRESHOLD
-                ? "var(--status-completed)"
+                ? "var(--success)"
                 : r.confidence >= 0.7
-                  ? "var(--status-partial)"
-                  : "var(--status-failed)";
+                  ? "var(--warning)"
+                  : "var(--danger)";
             const isSelected = selectedKey === r.key;
             const src = sourceByKey.get(r.key);
             return (
@@ -231,7 +231,7 @@ export function ReviewList({
                   padding: "var(--space-3)",
                   border: `1px solid ${isSelected ? "var(--accent)" : "var(--border)"}`,
                   borderRadius: "var(--radius-sm)",
-                  background: "var(--surface-2)",
+                  background: "var(--bg-subtle)",
                 }}
               >
                 <div style={{ display: "grid", gap: 4 }}>
@@ -241,7 +241,7 @@ export function ReviewList({
                       alignItems: "center",
                       gap: "var(--space-2)",
                       flexWrap: "wrap",
-                      fontSize: "var(--text-xs)",
+                      fontSize: "var(--font-size-xs)",
                       color: "var(--text-muted)",
                       textTransform: "uppercase",
                       letterSpacing: "0.03em",
@@ -268,12 +268,12 @@ export function ReviewList({
                         borderRadius: "var(--radius-sm)",
                         color: "var(--text)",
                         padding: "6px 8px",
-                        fontSize: "var(--text-base)",
+                        fontSize: "var(--font-size-sm)",
                         fontFamily: "inherit",
                       }}
                     />
                   ) : (
-                    <span style={{ fontSize: "var(--text-base)" }}>{r.value}</span>
+                    <span style={{ fontSize: "var(--font-size-sm)" }}>{r.value}</span>
                   )}
                 </div>
                 <label
@@ -282,8 +282,8 @@ export function ReviewList({
                     display: "inline-flex",
                     gap: 6,
                     alignItems: "center",
-                    fontSize: "var(--text-xs)",
-                    color: r.approved ? "var(--status-completed)" : "var(--text-muted)",
+                    fontSize: "var(--font-size-xs)",
+                    color: r.approved ? "var(--success)" : "var(--text-muted)",
                     cursor: "pointer",
                     whiteSpace: "nowrap",
                   }}
@@ -303,7 +303,7 @@ export function ReviewList({
       </div>
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{ fontSize: "var(--text-xs)", color: "var(--text-muted)" }}>
+        <span style={{ fontSize: "var(--font-size-xs)", color: "var(--text-muted)" }}>
           {approvedCount} / {rows.length} approved
           {saved ? ` · saved ${new Date(saved).toLocaleTimeString()}` : ""}
         </span>

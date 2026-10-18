@@ -1,23 +1,10 @@
 "use client";
 
-import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import styles from "./ui.module.css";
 import type { JobStatus } from "@/jobs/types";
 
-export const Button = forwardRef<
-  HTMLButtonElement,
-  ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "default" | "primary" | "danger" }
->(function Button({ variant = "default", className, ...rest }, ref) {
-  const cls = [
-    styles.button,
-    variant === "primary" && styles.primary,
-    variant === "danger" && styles.danger,
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
-  return <button ref={ref} className={cls} {...rest} />;
-});
+export { Button, type ButtonProps } from "@house/react";
 
 export function Card({ children }: { children: ReactNode }) {
   return <div className={styles.card}>{children}</div>;
@@ -55,12 +42,12 @@ export function FeatureBadge({ label }: { label: string }) {
 }
 
 const STATUS_COLOR: Record<JobStatus, string> = {
-  queued: "var(--status-queued)",
-  processing: "var(--status-processing)",
-  partially_completed: "var(--status-partial)",
-  completed: "var(--status-completed)",
-  failed: "var(--status-failed)",
-  rejected: "var(--status-failed)",
+  queued: "var(--text-muted)",
+  processing: "var(--info)",
+  partially_completed: "var(--warning)",
+  completed: "var(--success)",
+  failed: "var(--danger)",
+  rejected: "var(--danger)",
 };
 
 const STATUS_LABEL: Record<JobStatus, string> = {
@@ -116,11 +103,7 @@ export function FieldRow({
   onSelect?: () => void;
 }) {
   const color =
-    confidence >= 0.85
-      ? "var(--status-completed)"
-      : confidence >= 0.7
-        ? "var(--status-partial)"
-        : "var(--status-failed)";
+    confidence >= 0.85 ? "var(--success)" : confidence >= 0.7 ? "var(--warning)" : "var(--danger)";
   return (
     <div
       className={styles.fieldRow}

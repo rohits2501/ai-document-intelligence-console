@@ -68,10 +68,10 @@ export function UploadPanel() {
         }}
         style={{
           border: `1px dashed ${dragging ? "var(--accent)" : "var(--border)"}`,
-          borderRadius: "var(--radius)",
-          padding: "var(--space-6)",
+          borderRadius: "var(--radius-md)",
+          padding: "var(--space-8)",
           textAlign: "center",
-          background: dragging ? "var(--surface-2)" : "transparent",
+          background: dragging ? "var(--bg-subtle)" : "transparent",
         }}
       >
         <p style={{ color: "var(--text-muted)", marginTop: 0 }}>
@@ -92,7 +92,7 @@ export function UploadPanel() {
         {busy && progress ? (
           <div style={{ display: "grid", gap: "var(--space-2)", maxWidth: 420, margin: "0 auto" }}>
             <ProgressBar value={progress.pct} max={100} />
-            <div style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)" }}>
+            <div style={{ fontSize: "var(--font-size-sm)", color: "var(--text-muted)" }}>
               Uploading… {progress.pct}%
             </div>
             <Button variant="danger" onClick={cancel}>
@@ -106,7 +106,7 @@ export function UploadPanel() {
         )}
 
         {error && (
-          <p role="alert" style={{ color: "var(--status-partial)", marginBottom: 0 }}>
+          <p role="alert" style={{ color: "var(--warning)", marginBottom: 0 }}>
             {error}
           </p>
         )}

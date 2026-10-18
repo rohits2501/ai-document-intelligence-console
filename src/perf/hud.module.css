@@ -8,10 +8,10 @@
   padding: var(--space-3);
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow);
   color: var(--text);
-  font-size: var(--text-xs);
+  font-size: var(--font-size-xs);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
@@ -42,5 +42,5 @@
 }
 
 .over {
-  color: var(--status-failed);
+  color: var(--danger);
 }

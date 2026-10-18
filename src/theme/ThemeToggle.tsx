@@ -64,10 +64,10 @@ export function ThemeToggle() {
               border: 0,
               borderRadius: "var(--radius-sm)",
               padding: "var(--space-1) var(--space-2)",
-              fontSize: "var(--text-xs)",
+              fontSize: "var(--font-size-xs)",
               fontFamily: "inherit",
               cursor: "pointer",
-              background: active ? "var(--accent-soft)" : "transparent",
+              background: active ? "var(--accent-subtle)" : "transparent",
               color: active ? "var(--accent)" : "var(--text-muted)",
             }}
           >

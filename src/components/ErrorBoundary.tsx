@@ -34,7 +34,7 @@ export class ErrorBoundary extends Component<Props, State> {
       <div
         role="alert"
         style={{
-          padding: "var(--space-5)",
+          padding: "var(--space-6)",
           display: "grid",
           gap: "var(--space-3)",
           justifyItems: "start",

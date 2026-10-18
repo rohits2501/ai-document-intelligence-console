@@ -88,12 +88,12 @@ export function JobConsole({ jobId }: { jobId: string }) {
           <Link href="/" style={{ textDecoration: "none" }}>
             ← Back
           </Link>
-          <h1 style={{ margin: 0, fontSize: "var(--text-xl)" }}>Job {jobId}</h1>
+          <h1 style={{ margin: 0, fontSize: "var(--font-size-lg)" }}>Job {jobId}</h1>
           <StatusBadge status={state.status} />
           <span
             style={{
-              fontSize: "var(--text-xs)",
-              color: connected ? "var(--status-completed)" : "var(--text-muted)",
+              fontSize: "var(--font-size-xs)",
+              color: connected ? "var(--success)" : "var(--text-muted)",
             }}
           >
             {connected ? "● live" : "○ reconnecting"}
@@ -113,13 +113,13 @@ export function JobConsole({ jobId }: { jobId: string }) {
       <Panel title="Progress" tourId="job-progress" badge="Live SSE">
         <div style={{ display: "grid", gap: "var(--space-2)" }}>
           <ProgressBar value={state.pagesProcessed} max={total || 1} />
-          <div style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)" }}>
+          <div style={{ fontSize: "var(--font-size-sm)", color: "var(--text-muted)" }}>
             {total > 0
               ? `Processed ${state.pagesProcessed} / ${total} pages`
               : "Waiting for the job to start…"}
           </div>
           {state.error && (
-            <div role="alert" style={{ color: "var(--status-failed)", fontSize: "var(--text-sm)" }}>
+            <div role="alert" style={{ color: "var(--danger)", fontSize: "var(--font-size-sm)" }}>
               {state.error}
             </div>
           )}
@@ -159,8 +159,8 @@ export function JobConsole({ jobId }: { jobId: string }) {
           {state.failedKeys.length > 0 && (
             <p
               style={{
-                color: "var(--status-partial)",
-                fontSize: "var(--text-xs)",
+                color: "var(--warning)",
+                fontSize: "var(--font-size-xs)",
                 marginBottom: 0,
               }}
             >
@@ -194,7 +194,7 @@ export function JobConsole({ jobId }: { jobId: string }) {
                       left: 0,
                       width: "100%",
                       transform: `translateY(${item.start}px)`,
-                      fontSize: "var(--text-sm)",
+                      fontSize: "var(--font-size-sm)",
                     }}
                   >
                     <span style={{ color: "var(--text-muted)" }}>#{e.id}</span> {e.type}
@@ -214,7 +214,7 @@ export function JobConsole({ jobId }: { jobId: string }) {
                 display: "grid",
                 gridTemplateColumns: "auto 1fr",
                 gap: "var(--space-1) var(--space-3)",
-                fontSize: "var(--text-sm)",
+                fontSize: "var(--font-size-sm)",
               }}
             >
               <Diag label="job_id" value={jobId} />

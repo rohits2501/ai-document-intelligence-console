@@ -152,7 +152,7 @@ export function DocumentViewer({
       style={{
         height: 560,
         overflow: "auto",
-        background: "var(--surface-2)",
+        background: "var(--bg-subtle)",
         borderRadius: "var(--radius-sm)",
       }}
     >
@@ -203,7 +203,7 @@ function ImageViewer({
       style={{
         height: 560,
         overflow: "auto",
-        background: "var(--surface-2)",
+        background: "var(--bg-subtle)",
         borderRadius: "var(--radius-sm)",
       }}
     >
@@ -244,10 +244,10 @@ function Overlay({
         const selected = f.key === selectedKey;
         const color =
           f.confidence >= 0.85
-            ? "var(--status-completed)"
+            ? "var(--success)"
             : f.confidence >= 0.7
-              ? "var(--status-partial)"
-              : "var(--status-failed)";
+              ? "var(--warning)"
+              : "var(--danger)";
         return (
           <button
             key={f.key}
@@ -262,7 +262,7 @@ function Overlay({
               width: `${f.bbox.w * 100}%`,
               height: `${f.bbox.h * 100}%`,
               border: `2px solid ${color}`,
-              background: selected ? "var(--accent-soft)" : "transparent",
+              background: selected ? "var(--accent-subtle)" : "transparent",
               boxShadow: selected ? "0 0 0 2px var(--accent)" : "none",
               borderRadius: 2,
               pointerEvents: "auto",
@@ -285,7 +285,7 @@ function PageFrame({ pageNumber }: { pageNumber: number }) {
         display: "grid",
         placeItems: "center",
         color: "var(--text-muted)",
-        fontSize: "var(--text-sm)",
+        fontSize: "var(--font-size-sm)",
         border: "1px solid var(--border)",
         background: "var(--paper)",
       }}
@@ -297,7 +297,7 @@ function PageFrame({ pageNumber }: { pageNumber: number }) {
 
 function ViewerNote({ text }: { text: string }) {
   return (
-    <div style={{ padding: "var(--space-5)", color: "var(--text-muted)", textAlign: "center" }}>
+    <div style={{ padding: "var(--space-6)", color: "var(--text-muted)", textAlign: "center" }}>
       {text}
     </div>
   );

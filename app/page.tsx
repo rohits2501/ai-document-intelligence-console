@@ -8,8 +8,8 @@ import { PERF_JOB_ID } from "@/perf/ids";
 
 export default function HomePage() {
   return (
-    <main style={{ maxWidth: 900, margin: "0 auto", padding: "var(--space-6) var(--space-4)" }}>
-      <header style={{ marginBottom: "var(--space-5)" }}>
+    <main style={{ maxWidth: 900, margin: "0 auto", padding: "var(--space-8) var(--space-4)" }}>
+      <header style={{ marginBottom: "var(--space-6)" }}>
         <div
           style={{
             display: "flex",
@@ -19,7 +19,9 @@ export default function HomePage() {
             marginBottom: "var(--space-2)",
           }}
         >
-          <h1 style={{ fontSize: "var(--text-2xl)", margin: 0 }}>Document Intelligence Console</h1>
+          <h1 style={{ fontSize: "var(--font-size-xl)", margin: 0 }}>
+            Document Intelligence Console
+          </h1>
           <div
             style={{ display: "flex", alignItems: "center", gap: "var(--space-3)", flexShrink: 0 }}
           >
@@ -29,7 +31,7 @@ export default function HomePage() {
               rel="noopener noreferrer"
               style={{
                 color: "var(--text-muted)",
-                fontSize: "var(--text-sm)",
+                fontSize: "var(--font-size-sm)",
                 textDecoration: "none",
                 whiteSpace: "nowrap",
               }}

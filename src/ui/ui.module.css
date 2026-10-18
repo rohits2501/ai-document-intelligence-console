@@ -1,51 +1,14 @@
-.button {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  background: var(--surface-2);
-  color: var(--text);
-  font-size: var(--text-sm);
-  font-family: inherit;
-  cursor: pointer;
-  transition:
-    background 0.12s ease,
-    border-color 0.12s ease;
-}
-.button:hover:not(:disabled) {
-  border-color: var(--accent);
-}
-.button[aria-pressed="true"] {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-}
-.button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-.primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--accent-contrast);
-}
-.danger {
-  border-color: var(--status-failed);
-  color: var(--status-failed);
-}
-
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: var(--space-5);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
 }
 
 .panel {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-md);
   overflow: hidden;
 }
 .panelHeader {
@@ -55,7 +18,7 @@
   gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--border);
-  font-size: var(--text-sm);
+  font-size: var(--font-size-sm);
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -66,12 +29,12 @@
   align-items: center;
   padding: 1px var(--space-2);
   border-radius: 999px;
-  font-size: var(--text-xs);
+  font-size: var(--font-size-xs);
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--accent);
-  background: var(--accent-soft);
+  background: var(--accent-subtle);
   border: 1px solid var(--accent);
 }
 .panelBody {
@@ -84,10 +47,10 @@
   gap: var(--space-2);
   padding: 2px var(--space-2);
   border-radius: 999px;
-  font-size: var(--text-xs);
+  font-size: var(--font-size-xs);
   font-weight: 600;
   border: 1px solid var(--border);
-  background: var(--surface-2);
+  background: var(--bg-subtle);
 }
 .badgeDot {
   width: 8px;
@@ -100,7 +63,7 @@
   width: 100%;
   height: 8px;
   border-radius: 999px;
-  background: var(--surface-2);
+  background: var(--bg-subtle);
   overflow: hidden;
 }
 .progressFill {
@@ -117,7 +80,7 @@
   padding: var(--space-3);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: var(--surface-2);
+  background: var(--bg-subtle);
   cursor: pointer;
 }
 .fieldRow[data-selected="true"] {
@@ -125,15 +88,15 @@
 }
 .fieldKey {
   color: var(--text-muted);
-  font-size: var(--text-xs);
+  font-size: var(--font-size-xs);
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
 .fieldValue {
-  font-size: var(--text-base);
+  font-size: var(--font-size-sm);
 }
 .confidence {
-  font-size: var(--text-xs);
+  font-size: var(--font-size-xs);
   font-weight: 600;
 }
 
@@ -148,7 +111,7 @@
   background: var(--surface);
   color: var(--text-muted);
   font-family: inherit;
-  font-size: var(--text-xs);
+  font-size: var(--font-size-xs);
   line-height: 1.4;
   text-transform: none;
   letter-spacing: normal;
