@@ -126,7 +126,13 @@ export function JobConsole({ jobId }: { jobId: string }) {
         </div>
       </Panel>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: "var(--space-4)" }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "minmax(0, 1.2fr) minmax(0, 1fr)",
+          gap: "var(--space-4)",
+        }}
+      >
         <Panel title="Document" tourId="document-viewer" badge="Virtualized">
           {documentId ? (
             <ErrorBoundary label="The document viewer">

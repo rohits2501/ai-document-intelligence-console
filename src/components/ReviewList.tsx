@@ -168,7 +168,7 @@ export function ReviewList({
 
   return (
     <div style={{ display: "grid", gap: "var(--space-3)" }}>
-      <div ref={parentRef} style={{ height: 480, overflow: "auto" }}>
+      <div ref={parentRef} style={{ height: 480, overflowX: "hidden", overflowY: "auto" }}>
         <div style={{ height: virtualizer.getTotalSize(), position: "relative" }}>
           {virtualizer.getVirtualItems().map((item) => {
             const entry = items[item.index];
@@ -225,22 +225,23 @@ export function ReviewList({
                   width: "100%",
                   transform: `translateY(${item.start}px)`,
                   display: "grid",
-                  gridTemplateColumns: "1fr auto",
+                  gridTemplateColumns: "minmax(0, 1fr) auto",
                   gap: "var(--space-2)",
                   alignItems: "center",
                   padding: "var(--space-3)",
                   border: `1px solid ${isSelected ? "var(--accent)" : "var(--border)"}`,
-                  borderRadius: "var(--radius-sm)",
+                  borderRadius: "var(--radius-md)",
                   background: "var(--bg-subtle)",
                 }}
               >
-                <div style={{ display: "grid", gap: 4 }}>
+                <div style={{ display: "grid", gap: 4, minWidth: 0 }}>
                   <div
                     style={{
                       display: "flex",
                       alignItems: "center",
                       gap: "var(--space-2)",
                       flexWrap: "wrap",
+                      minWidth: 0,
                       fontSize: "var(--font-size-xs)",
                       color: "var(--text-muted)",
                       textTransform: "uppercase",
@@ -263,9 +264,12 @@ export function ReviewList({
                       onChange={(e) => update(r.key, { value: e.target.value })}
                       onClick={(e) => e.stopPropagation()}
                       style={{
+                        width: "100%",
+                        minWidth: 0,
+                        boxSizing: "border-box",
                         background: "var(--surface)",
                         border: "1px solid var(--border)",
-                        borderRadius: "var(--radius-sm)",
+                        borderRadius: "var(--radius-md)",
                         color: "var(--text)",
                         padding: "6px 8px",
                         fontSize: "var(--font-size-sm)",
