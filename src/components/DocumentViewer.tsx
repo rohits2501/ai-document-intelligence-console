@@ -153,7 +153,7 @@ export function DocumentViewer({
         height: 560,
         overflow: "auto",
         background: "var(--bg-subtle)",
-        borderRadius: "var(--radius-sm)",
+        borderRadius: "var(--radius-md)",
       }}
     >
       {failed ? (
@@ -204,7 +204,7 @@ function ImageViewer({
         height: 560,
         overflow: "auto",
         background: "var(--bg-subtle)",
-        borderRadius: "var(--radius-sm)",
+        borderRadius: "var(--radius-md)",
       }}
     >
       <div style={{ width: PAGE_WIDTH, margin: "0 auto", padding: "8px 0" }}>
