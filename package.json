@@ -18,6 +18,8 @@
     "seed:perf": "npx tsx scripts/seed-perf-fixture.ts"
   },
   "dependencies": {
+    "@house/react": "file:vendor/house-react-0.1.0.tgz",
+    "@house/tokens": "file:vendor/house-tokens-0.1.0.tgz",
     "@tanstack/react-pacer": "^0.23.0",
     "@tanstack/react-virtual": "^3.10.8",
     "better-sqlite3": "^12.11.1",
