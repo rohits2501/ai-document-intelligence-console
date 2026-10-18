@@ -1,76 +1,42 @@
+/*
+ * Colors, space, type, and radius come from @house/tokens (imported in app/layout.tsx).
+ * The aliases below keep the console's older variable names rendering while screens move to the
+ * package names. Remove an alias once nothing reads it.
+ */
 :root {
-  /* spacing (4px base) */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
+  /* Legacy aliases onto package roles. */
+  --surface-2: var(--bg-subtle);
+  --text-strong: var(--text);
+  --accent-soft: var(--accent-subtle);
+  --status-queued: var(--text-muted);
+  --status-processing: var(--info);
+  --status-partial: var(--warning);
+  --status-completed: var(--success);
+  --status-failed: var(--danger);
+  --radius: var(--radius-md);
+  --text-xs: var(--font-size-xs);
+  --text-sm: var(--font-size-sm);
+  --text-base: var(--font-size-sm);
+  --text-lg: var(--font-size-md);
+  --text-xl: var(--font-size-lg);
+  --text-2xl: var(--font-size-xl);
+
+  /* The console's step 5 and 6 were 24px and 32px; the package's are 20px and 24px. */
   --space-5: 24px;
   --space-6: 32px;
-
-  /* radius */
-  --radius: 8px;
-  --radius-sm: 4px;
-
-  /* type */
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
-    sans-serif;
-  --text-xs: 12px;
-  --text-sm: 13px;
-  --text-base: 14px;
-  --text-lg: 16px;
-  --text-xl: 20px;
-  --text-2xl: 26px;
 }
 
-/* Warm charcoal palette from public/study.html (html[data-theme="dark"]). */
+/* Console only values with no package role: the PDF page stays white, and overlays need a scrim. */
 [data-theme="dark"] {
-  color-scheme: dark;
-
-  --bg: #242220;
-  --surface: #2c2a27;
-  --surface-2: #33302c;
-  --border: #3d3934;
-  --text: #d6d0c4;
-  --text-strong: #efe9df;
-  --text-muted: #aea79a;
-  --accent: #e0b15f;
-  --accent-contrast: #242220;
-  --accent-soft: rgba(224, 177, 95, 0.16);
-
   --scrim: rgba(20, 18, 16, 0.72);
   --shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
   --paper: #ffffff;
-
-  --status-queued: #aea79a;
-  --status-processing: #e0b15f;
-  --status-partial: #e08a4a;
-  --status-completed: #7dba6a;
-  --status-failed: #e06a5c;
 }
 
 [data-theme="light"] {
-  color-scheme: light;
-
-  --bg: #f3f5f8;
-  --surface: #ffffff;
-  --surface-2: #eef2f7;
-  --border: #d0d7e2;
-  --text: #0f172a;
-  --text-strong: #0f172a;
-  --text-muted: #4b5b70;
-  --accent: #2563eb;
-  --accent-contrast: #ffffff;
-  --accent-soft: rgba(37, 99, 235, 0.12);
-
   --scrim: rgba(15, 23, 42, 0.48);
   --shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
   --paper: #ffffff;
-
-  --status-queued: #64748b;
-  --status-processing: #2563eb;
-  --status-partial: #b45309;
-  --status-completed: #15803d;
-  --status-failed: #dc2626;
 }
 
 * {
@@ -88,7 +54,7 @@ body {
   line-height: 1.5;
 }
 
-/* Subpixel smoothing keeps body text from looking faint on the warm dark surface. */
+/* Subpixel smoothing keeps body text from looking faint on the dark surface. */
 [data-theme="dark"] body {
   -webkit-font-smoothing: auto;
   -moz-osx-font-smoothing: auto;
