@@ -25,19 +25,6 @@ export default function HomePage() {
           <div
             style={{ display: "flex", alignItems: "center", gap: "var(--space-3)", flexShrink: 0 }}
           >
-            <a
-              href="/study.html"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                color: "var(--text-muted)",
-                fontSize: "var(--font-size-sm)",
-                textDecoration: "none",
-                whiteSpace: "nowrap",
-              }}
-            >
-              Study plan
-            </a>
             <ThemeToggle />
           </div>
         </div>
