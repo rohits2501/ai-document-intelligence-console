@@ -43,6 +43,12 @@ Source: `src/perf/field-budgets.ts`.
 
 LCP 2500 ms, INP 200 ms, CLS 0.1. These are the Core Web Vitals "good" thresholds, not a measured baseline. A session that crosses one logs a structured `web-vital over budget` warning in the browser. There is no collector behind it.
 
+## Pull request comment
+
+CI writes `perf/snapshot.json` after the production build: parsed bytes and level-9 gzip for each budgeted route, the pdf.js chunk, and the worker. A sticky comment, `<!-- perf-budget -->`, diffs that file against the snapshot from the last successful build on `main`. `baselineBytes` in `perf/budgets.json` is not the diff. A growth of at least 100 B or 1% is marked. The comment does not fail the build. The gzip ceiling still does. Raise `maxBytes` in the same change that grows a route.
+
+The same comment records the fixture mount counts (pages, review rows, event rows, job rows, and heap) from `[data-perf]` on the production build. Those counts diff against `main` and alarm when one regresses by 20% or crosses a ceiling in `src/perf/field-budgets.ts`. Duration and paint are printed and then folded into the noise band, so a different runner does not alarm and does not fail the build.
+
 ## Commands
 
 ```bash
