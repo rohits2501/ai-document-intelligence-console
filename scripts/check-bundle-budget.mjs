@@ -11,7 +11,7 @@
  * Print the measurement without enforcing: `node scripts/check-bundle-budget.mjs --print`
  */
 import { createRequire } from "node:module";
-import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
@@ -106,18 +106,18 @@ export function measureRoutes(distDir) {
   // that double-counts and no longer matches the First Load JS column.
   const appFiles = (pages["/_app"] ?? []).filter((file) => file.endsWith(".js"));
 
-  /** @type {Map<string, number>} */
-  const gzipCache = new Map();
-  const gzip = (rel) => {
-    const cached = gzipCache.get(rel);
+  /** @type {Map<string, { parsed: number, gzip: number }>} */
+  const sizeCache = new Map();
+  const sizeOf = (rel) => {
+    const cached = sizeCache.get(rel);
     if (cached != null) return cached;
     const abs = path.join(distDir, rel);
-    const bytes = gzipSize.fileSync(abs);
-    gzipCache.set(rel, bytes);
-    return bytes;
+    const measured = { parsed: statSync(abs).size, gzip: gzipSize.fileSync(abs) };
+    sizeCache.set(rel, measured);
+    return measured;
   };
 
-  /** @type {{ path: string, bytes: number }[]} */
+  /** @type {{ path: string, bytes: number, parsed: number }[]} */
   const routes = [];
   const seen = new Set();
   for (const [key, files] of Object.entries(appManifest.pages ?? {})) {
@@ -126,9 +126,14 @@ export function measureRoutes(distDir) {
     if (seen.has(route)) continue;
     seen.add(route);
     const js = [...new Set([...(files ?? []), ...appFiles])].filter((file) => file.endsWith(".js"));
-    let total = 0;
-    for (const file of js) total += gzip(file);
-    routes.push({ path: route, bytes: total });
+    let gzip = 0;
+    let parsed = 0;
+    for (const file of js) {
+      const sized = sizeOf(file);
+      gzip += sized.gzip;
+      parsed += sized.parsed;
+    }
+    routes.push({ path: route, bytes: gzip, parsed });
   }
   routes.sort((a, b) => a.path.localeCompare(b.path));
   return routes;
@@ -138,6 +143,7 @@ export function measureAssets(assets) {
   return assets.map((asset) => ({
     path: asset.path,
     bytes: gzipSize.fileSync(asset.path),
+    parsed: statSync(asset.path).size,
   }));
 }
 
@@ -168,10 +174,35 @@ export function measureMarkers(distDir, markers) {
     const hits = files.filter((file) => read(file).includes(marker.contains));
     if (hits.length === 0) continue;
     let bytes = 0;
-    for (const file of hits) bytes += gzipSize.fileSync(file);
-    measured.push({ path: marker.id, bytes });
+    let parsed = 0;
+    for (const file of hits) {
+      bytes += gzipSize.fileSync(file);
+      parsed += statSync(file).size;
+    }
+    measured.push({ path: marker.id, bytes, parsed });
   }
   return measured;
+}
+
+function writeSnapshot(bundles) {
+  const snapshotPath = path.resolve("perf/snapshot.json");
+  let benches = [];
+  if (existsSync(snapshotPath)) {
+    try {
+      benches = readJson(snapshotPath).benches ?? [];
+    } catch {
+      benches = [];
+    }
+  }
+  writeFileSync(snapshotPath, `${JSON.stringify({ bundles, benches }, null, 2)}\n`);
+}
+
+function snapshotBundles(routes, assets, markers) {
+  return [
+    ...routes.map((route) => ({ name: route.path, parsed: route.parsed, gzip: route.bytes })),
+    ...assets.map((asset) => ({ name: asset.path, parsed: asset.parsed, gzip: asset.bytes })),
+    ...markers.map((marker) => ({ name: marker.path, parsed: marker.parsed, gzip: marker.bytes })),
+  ];
 }
 
 function printRow(label, bytes, maxBytes) {
@@ -189,6 +220,7 @@ function main() {
   const markerLimits = budgets?.markers ?? [];
   const assets = assetLimits.length > 0 ? measureAssets(assetLimits) : [];
   const markers = markerLimits.length > 0 ? measureMarkers(distDir, markerLimits) : [];
+  writeSnapshot(snapshotBundles(routes, assets, markers));
 
   console.log("First-load JS (gzip, level 9 — same number as next build)");
   const maxByRoute = new Map((budgets?.routes ?? []).map((route) => [route.path, route.maxBytes]));

@@ -5,6 +5,11 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+  actions: read
+  pull-requests: write
+
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -35,4 +40,48 @@ jobs:
         run: npm test
 
       - name: Build and performance budget
+        id: budget
         run: npm run build
+
+      - name: Install Playwright browser
+        if: steps.budget.outcome == 'success'
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Fixture benches
+        if: steps.budget.outcome == 'success'
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers
+        run: node scripts/run-bench.mjs
+
+      - name: Upload perf snapshot
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.budget.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: perf-snapshot
+          path: perf/snapshot.json
+          retention-days: 30
+
+      - name: Comment on the pull request
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && (steps.budget.outcome == 'success' || steps.budget.outcome == 'failure')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ ! -f perf/snapshot.json ]; then
+            echo "No perf snapshot to comment on."
+            exit 0
+          fi
+          mkdir -p perf-base
+          id=$(gh run list --workflow ci.yml --branch main --status success --limit 1 --json databaseId --jq '.[0].databaseId // empty')
+          if [ -n "$id" ]; then
+            gh run download "$id" --name perf-snapshot --dir perf-base || true
+          fi
+          args=(--head perf/snapshot.json --run-url "$RUN_URL" --post)
+          if [ -f perf-base/snapshot.json ]; then
+            args+=(--base perf-base/snapshot.json)
+          fi
+          node scripts/perf-comment.mjs "${args[@]}"

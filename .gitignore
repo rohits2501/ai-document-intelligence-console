@@ -27,6 +27,11 @@ yarn-error.log*
 .vscode/
 .idea/
 
+# perf comment artifacts
+perf/snapshot.json
+perf-base/
+.playwright-browsers/
+
 # runtime demo storage
 .data/
 uploads/
