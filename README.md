@@ -69,6 +69,7 @@ Extracted fields carry `confidence` and `sources` (page + normalized bounding bo
 
 <img width="1172" height="777" alt="image" src="https://github.com/user-attachments/assets/67d8bf00-de5d-426a-9651-89a5e7c5503b" />
 
+<img width="1439" height="777" alt="image" src="https://github.com/user-attachments/assets/7114dc9d-0910-4b75-a4f8-8b6e69c928ac" />
 
 ## What the console demonstrates
 
@@ -88,6 +89,8 @@ Extracted fields carry `confidence` and `sources` (page + normalized bounding bo
 <img width="1145" height="780" alt="image" src="https://github.com/user-attachments/assets/fedceb19-035a-4f42-aa80-84aae8be80ed" />
 
 <img width="1045" height="569" alt="image" src="https://github.com/user-attachments/assets/6ed9e668-7908-4df5-ae37-e2f669725c0b" />
+
+<img width="1440" height="780" alt="image" src="https://github.com/user-attachments/assets/2bac3ba2-3419-455f-b295-11a679a0ac0e" />
 
 
 ## Tech
