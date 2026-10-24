@@ -11,6 +11,9 @@
   border-radius: var(--radius-md);
   overflow: hidden;
 }
+.panelSubtle {
+  background: var(--bg-subtle);
+}
 .panelHeader {
   display: flex;
   align-items: center;

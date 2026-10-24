@@ -187,7 +187,7 @@ export function JobConsole({ jobId }: { jobId: string }) {
       </div>
 
       {flags.inferenceLab ? (
-        <Panel title="Inference lab" badge="Rule checked">
+        <Panel title="Inference lab" badge="Rule checked" surface="subtle">
           <ErrorBoundary label="The inference lab">
             <InferencePanel
               jobId={jobId}

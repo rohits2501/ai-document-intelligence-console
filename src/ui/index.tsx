@@ -19,14 +19,20 @@ export function Panel({
   children,
   tourId,
   badge,
+  surface = "default",
 }: {
   title: string;
   children: ReactNode;
   tourId?: string;
   badge?: string;
+  /** `subtle` is the inference lab chrome. Other panels keep `var(--surface)`. */
+  surface?: "default" | "subtle";
 }) {
   return (
-    <section className={styles.panel} data-tour={tourId}>
+    <section
+      className={surface === "subtle" ? `${styles.panel} ${styles.panelSubtle}` : styles.panel}
+      data-tour={tourId}
+    >
       <header className={styles.panelHeader}>
         <span>{title}</span>
         {badge ? <FeatureBadge label={badge} /> : null}
