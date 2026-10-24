@@ -87,6 +87,8 @@ Extracted fields carry `confidence` and `sources` (page + normalized bounding bo
 
 <img width="1145" height="780" alt="image" src="https://github.com/user-attachments/assets/fedceb19-035a-4f42-aa80-84aae8be80ed" />
 
+<img width="1045" height="569" alt="image" src="https://github.com/user-attachments/assets/6ed9e668-7908-4df5-ae37-e2f669725c0b" />
+
 
 ## Tech
 
