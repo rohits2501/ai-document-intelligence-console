@@ -23,12 +23,19 @@ export interface InferenceEngine {
   infer(input: EngineInput): Promise<EngineOutput>;
 }
 
+/** Env this selector reads. Extra keys are ignored; `process.env` still assigns. */
+export type InferenceEnv = {
+  INFERENCE_BACKEND?: string;
+  OPEN_ONTOLOGIES_BIN?: string;
+  [key: string]: string | undefined;
+};
+
 /**
  * Reads `INFERENCE_BACKEND`. Unset or `ts` is the TypeScript engine (Vercel, CI, any visitor).
  * `cli` is the local binary. `http` and any other name are not configured in this phase, so the
  * preview fails instead of silently falling back to `ts`.
  */
-export function selectEngine(env: NodeJS.ProcessEnv = process.env): InferenceEngine {
+export function selectEngine(env: InferenceEnv = process.env): InferenceEngine {
   const backend = (env.INFERENCE_BACKEND ?? "ts").trim().toLowerCase();
   switch (backend) {
     case "":

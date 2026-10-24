@@ -191,7 +191,7 @@ Extraction still only proposes candidate fields. You get a separate inference la
    - [x] Engine selector, the local binary, and the HTTP backend left unconfigured (AC-6, AC-7, AC-8)
    - [x] Lab panel, the flag, the saved example, the span, and the bundle ceiling (AC-14, AC-16, AC-17)
 - [ ] Verify it: `/check verify document inference lab`
-- [ ] Test it: `/test document inference lab`
+- [x] Test it: `/test document inference lab`
 Spec [0008](../specs/0008-document-inference-lab/index.md) · code in `src/inference/`, `app/api/inference/preview/`, `src/components/InferencePanel.tsx`
 
 ## Deferred
