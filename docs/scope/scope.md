@@ -3,7 +3,7 @@
 A document intelligence job console for operators: drop a document, watch a long running processing job stream its progress, then review, edit, and approve the extracted fields on the page. Built as a Staff Frontend portfolio piece around real time streaming, long running jobs, large documents, and human review.
 
 **Build approach:** Tracer Bullet (prove one thin real thread through every layer first, then thicken each segment).
-**Workflow:** Alpha (after `/develop`, run `/check verify`). Four features carry a `· Beta` tag (Stack & architecture, Core job loop, Durable job store, Exported observability) so they also get `/test`, because the job machine, the store that holds it, and the export contract must stay locked by tests. `/check review` and `/document` run once at the end.
+**Workflow:** Alpha (after `/develop`, run `/check verify`). Five features carry a `· Beta` tag (Stack & architecture, Core job loop, Durable job store, Exported observability, Document inference lab) so they also get `/test`, because the job machine, the store that holds it, the export contract, and inferred conclusions must stay locked by tests. `/check review` and `/document` run once at the end.
 
 _These are recommendations to keep your build orderly, not requirements. Skip anything that does not fit: if you already know how to build a feature, use `/develop` and skip `/architect`. You decide when a feature is `done`._
 
@@ -28,6 +28,7 @@ _These are recommendations to keep your build orderly, not requirements. Skip an
 | 17 | Exported observability | Slice 10 | planned |
 | 14 | Operator job queue | Slice 11 | done |
 | 15 | Extract schema on upload | Slice 12 | planned |
+| 18 | Document inference lab | Slice 13 | planned |
 
 ## Foundations
 
@@ -178,6 +179,21 @@ The operator picks or pastes an extract schema when creating a job, so extract i
 **Done when:** creating an extract job sends a schema, and the fields on the console match that schema.
 - [ ] Design it (spec): `/architect extract schema on upload`
 
+## Slice 13: Document inference lab
+
+### 18. Document inference lab · planned · Beta
+Extraction still only proposes candidate fields. You get a separate inference lab that turns those fields, plus any saved review edits, into facts you can trace to their source, checks them, and shows the conclusions that follow. A missing fact stays unknown.
+**Done when:** you can open a processed job and see the checked facts, the evidence behind them, and the conclusions that follow, including when a required fact is missing.
+- [x] Design it (spec): `/architect document inference lab`
+- [ ] Build it: `/develop document inference lab`
+   - [ ] Thin thread: facts from the job and the saved review, the default checker, and a preview that leaves the job unchanged (AC-1, AC-2, AC-3, AC-4, AC-5, AC-6)
+   - [ ] Invoice rules, the graph and certificate, and the four fixtures (AC-9, AC-10, AC-11, AC-12, AC-13, AC-14, AC-15, AC-18)
+   - [ ] Engine selector, the local binary, and the HTTP backend left unconfigured (AC-6, AC-7, AC-8)
+   - [ ] Lab panel, the flag, the saved example, the span, and the bundle ceiling (AC-14, AC-16, AC-17)
+- [ ] Verify it: `/check verify document inference lab`
+- [ ] Test it: `/test document inference lab`
+Spec [0008](../specs/0008-document-inference-lab.md)
+
 ## Deferred
 Out of scope for the current build pass, kept so the plan stays honest.
 
@@ -191,6 +207,7 @@ Wire the real document AI provider behind the extraction interface. The optional
 Code in `src/extraction/docai-provider.ts`
 
 - **Store retention and bounding**: prune jobs and their events past a count or age, to fully close review 0001's unbounded store finding · from spec 0005 · needs a decision
+- **Hosted inference checker**: call the same inference result on Google Cloud Run, with a timeout, a max input size, a request quota, and a budget alert · from spec 0008
 - **Acrobat complete editor**: full annotation/editing suite · out of scope
 - **Real object storage at 5 GB**: production upload pipeline · out of scope (local disk for the demo)
 - **Authentication & accounts**: multi user auth · deferred (local single operator demo)
