@@ -28,7 +28,7 @@ _These are recommendations to keep your build orderly, not requirements. Skip an
 | 17 | Exported observability | Slice 10 | planned |
 | 14 | Operator job queue | Slice 11 | done |
 | 15 | Extract schema on upload | Slice 12 | planned |
-| 18 | Document inference lab | Slice 13 | planned |
+| 18 | Document inference lab | Slice 13 | in-progress |
 
 ## Foundations
 
@@ -181,18 +181,18 @@ The operator picks or pastes an extract schema when creating a job, so extract i
 
 ## Slice 13: Document inference lab
 
-### 18. Document inference lab · planned · Beta
+### 18. Document inference lab · in-progress · Beta
 Extraction still only proposes candidate fields. You get a separate inference lab that turns those fields, plus any saved review edits, into facts you can trace to their source, checks them, and shows the conclusions that follow. A missing fact stays unknown.
 **Done when:** you can open a processed job and see the checked facts, the evidence behind them, and the conclusions that follow, including when a required fact is missing.
 - [x] Design it (spec): `/architect document inference lab`
-- [ ] Build it: `/develop document inference lab`
-   - [ ] Thin thread: facts from the job and the saved review, the default checker, and a preview that leaves the job unchanged (AC-1, AC-2, AC-3, AC-4, AC-5, AC-6)
-   - [ ] Invoice rules, the graph and certificate, and the four fixtures (AC-9, AC-10, AC-11, AC-12, AC-13, AC-14, AC-15, AC-18)
-   - [ ] Engine selector, the local binary, and the HTTP backend left unconfigured (AC-6, AC-7, AC-8)
-   - [ ] Lab panel, the flag, the saved example, the span, and the bundle ceiling (AC-14, AC-16, AC-17)
+- [x] Build it: `/develop document inference lab`
+   - [x] Thin thread: facts from the job and the saved review, the default checker, and a preview that leaves the job unchanged (AC-1, AC-2, AC-3, AC-4, AC-5, AC-6)
+   - [x] Invoice rules, the graph and certificate, and the four fixtures (AC-9, AC-10, AC-11, AC-12, AC-13, AC-14, AC-15, AC-18)
+   - [x] Engine selector, the local binary, and the HTTP backend left unconfigured (AC-6, AC-7, AC-8)
+   - [x] Lab panel, the flag, the saved example, the span, and the bundle ceiling (AC-14, AC-16, AC-17)
 - [ ] Verify it: `/check verify document inference lab`
 - [ ] Test it: `/test document inference lab`
-Spec [0008](../specs/0008-document-inference-lab.md)
+Spec [0008](../specs/0008-document-inference-lab/index.md) · code in `src/inference/`, `app/api/inference/preview/`, `src/components/InferencePanel.tsx`
 
 ## Deferred
 Out of scope for the current build pass, kept so the plan stays honest.

@@ -1,0 +1,215 @@
+{
+  "jobId": "fixture-job-missing_mandatory_evidence",
+  "documentId": "fixture-doc-missing_mandatory_evidence",
+  "canonicalFacts": [
+    {
+      "id": "fact:doc:fixture-doc-missing_mandatory_evidence:doc:hasDocumentType:extracted",
+      "subjectId": "doc:fixture-doc-missing_mandatory_evidence",
+      "predicate": "doc:hasDocumentType",
+      "object": {
+        "kind": "literal",
+        "value": "Invoice",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-missing_mandatory_evidence",
+        "jobId": "fixture-job-missing_mandatory_evidence",
+        "fieldKey": "document_type",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-missing_mandatory_evidence:doc:hasInvoiceNumber:extracted",
+      "subjectId": "doc:fixture-doc-missing_mandatory_evidence",
+      "predicate": "doc:hasInvoiceNumber",
+      "object": {
+        "kind": "literal",
+        "value": "INV-2026-0418",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-missing_mandatory_evidence",
+        "jobId": "fixture-job-missing_mandatory_evidence",
+        "fieldKey": "invoice_number",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-missing_mandatory_evidence:doc:hasVendorName:extracted",
+      "subjectId": "doc:fixture-doc-missing_mandatory_evidence",
+      "predicate": "doc:hasVendorName",
+      "object": {
+        "kind": "literal",
+        "value": "Missing Evidence Traders Pvt Ltd",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-missing_mandatory_evidence",
+        "jobId": "fixture-job-missing_mandatory_evidence",
+        "fieldKey": "vendor_name",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-missing_mandatory_evidence:doc:hasTotalAmountPaise:extracted",
+      "subjectId": "doc:fixture-doc-missing_mandatory_evidence",
+      "predicate": "doc:hasTotalAmountPaise",
+      "object": {
+        "kind": "literal",
+        "value": "5000000",
+        "datatype": "xsd:integer"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-missing_mandatory_evidence",
+        "jobId": "fixture-job-missing_mandatory_evidence",
+        "fieldKey": "total_amount",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-missing_mandatory_evidence:doc:hasCurrency:extracted",
+      "subjectId": "doc:fixture-doc-missing_mandatory_evidence",
+      "predicate": "doc:hasCurrency",
+      "object": {
+        "kind": "literal",
+        "value": "INR",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-missing_mandatory_evidence",
+        "jobId": "fixture-job-missing_mandatory_evidence",
+        "fieldKey": "total_amount",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "extracted"
+      }
+    }
+  ],
+  "inferredFacts": [
+    {
+      "id": "fact:doc:fixture-doc-missing_mandatory_evidence:doc:hasApprovalTier:inferred:RULE-DERIVE-APPROVAL-TIER",
+      "subjectId": "doc:fixture-doc-missing_mandatory_evidence",
+      "predicate": "doc:hasApprovalTier",
+      "object": {
+        "kind": "literal",
+        "value": "standard_signoff",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-missing_mandatory_evidence",
+        "jobId": "fixture-job-missing_mandatory_evidence",
+        "fieldKey": "total_amount",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "inferred",
+        "ruleId": "RULE-DERIVE-APPROVAL-TIER"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "id": "finding:shacl_violation:SHACL-INV-REQUIRED:invoice_date",
+      "kind": "shacl_violation",
+      "severity": "error",
+      "ruleId": "SHACL-INV-REQUIRED",
+      "title": "Missing required field",
+      "explanation": "Required field Invoice date is missing.",
+      "premises": [
+        {
+          "factId": null,
+          "fieldKey": "invoice_date",
+          "label": "Invoice date",
+          "value": null,
+          "page": null,
+          "source": null
+        }
+      ]
+    },
+    {
+      "id": "finding:missing_evidence:SHACL-INV-REQUIRED:invoice_date",
+      "kind": "missing_evidence",
+      "severity": "warning",
+      "ruleId": "SHACL-INV-REQUIRED",
+      "title": "Missing required field",
+      "explanation": "Required field Invoice date is missing.",
+      "premises": [
+        {
+          "factId": null,
+          "fieldKey": "invoice_date",
+          "label": "Invoice date",
+          "value": null,
+          "page": null,
+          "source": null
+        }
+      ]
+    },
+    {
+      "id": "finding:inferred_conclusion:RULE-DERIVE-APPROVAL-TIER:total_amount",
+      "kind": "inferred_conclusion",
+      "severity": "info",
+      "ruleId": "RULE-DERIVE-APPROVAL-TIER",
+      "title": "Derived conclusion",
+      "explanation": "Total 5000000 paise gives review tier standard_signoff.",
+      "premises": [
+        {
+          "factId": "fact:doc:fixture-doc-missing_mandatory_evidence:doc:hasTotalAmountPaise:extracted",
+          "fieldKey": "total_amount",
+          "label": "Total",
+          "value": "5000000",
+          "page": 1,
+          "source": "fixture"
+        }
+      ],
+      "conclusion": {
+        "predicate": "doc:hasApprovalTier",
+        "value": "standard_signoff"
+      }
+    },
+    {
+      "id": "finding:missing_evidence:RULE-DERIVE-GST-STATE:gstin",
+      "kind": "missing_evidence",
+      "severity": "warning",
+      "ruleId": "RULE-DERIVE-GST-STATE",
+      "title": "GSTIN is missing",
+      "explanation": "GSTIN is missing, so no state can be derived.",
+      "premises": [
+        {
+          "factId": null,
+          "fieldKey": "gstin",
+          "label": "GSTIN",
+          "value": null,
+          "page": null,
+          "source": null
+        }
+      ]
+    }
+  ],
+  "turtleGraph": "@prefix doc: <http://example.invalid/doc#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n\n<http://example.invalid/id/fixture-doc-missing_mandatory_evidence>\n    doc:hasDocumentType \"Invoice\"^^xsd:string ;\n    doc:hasInvoiceNumber \"INV-2026-0418\"^^xsd:string ;\n    doc:hasVendorName \"Missing Evidence Traders Pvt Ltd\"^^xsd:string ;\n    doc:hasTotalAmountPaise \"5000000\"^^xsd:integer ;\n    doc:hasCurrency \"INR\"^^xsd:string .\n\n# Inferred by the invoice-v1 rules\n<http://example.invalid/id/fixture-doc-missing_mandatory_evidence>\n    doc:hasApprovalTier \"standard_signoff\"^^xsd:string .\n",
+  "certificate": {
+    "status": "rejected",
+    "engineUsed": "ts-symbolic-engine",
+    "ontologyVersion": "invoice-v1",
+    "inputHash": "4013f4d30d08a3e8ea61844a5b607285ec835d5877784754da2c48f5ae90c2c0",
+    "durationMs": 0
+  }
+}

@@ -1,0 +1,364 @@
+{
+  "jobId": "fixture-job-contradictory_dates_and_math",
+  "documentId": "fixture-doc-contradictory_dates_and_math",
+  "canonicalFacts": [
+    {
+      "id": "fact:doc:fixture-doc-contradictory_dates_and_math:doc:hasDocumentType:extracted",
+      "subjectId": "doc:fixture-doc-contradictory_dates_and_math",
+      "predicate": "doc:hasDocumentType",
+      "object": {
+        "kind": "literal",
+        "value": "Invoice",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-contradictory_dates_and_math",
+        "jobId": "fixture-job-contradictory_dates_and_math",
+        "fieldKey": "document_type",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-contradictory_dates_and_math:doc:hasInvoiceNumber:extracted",
+      "subjectId": "doc:fixture-doc-contradictory_dates_and_math",
+      "predicate": "doc:hasInvoiceNumber",
+      "object": {
+        "kind": "literal",
+        "value": "INV-2026-0901",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-contradictory_dates_and_math",
+        "jobId": "fixture-job-contradictory_dates_and_math",
+        "fieldKey": "invoice_number",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-contradictory_dates_and_math:doc:hasInvoiceDate:extracted",
+      "subjectId": "doc:fixture-doc-contradictory_dates_and_math",
+      "predicate": "doc:hasInvoiceDate",
+      "object": {
+        "kind": "literal",
+        "value": "2026-09-14",
+        "datatype": "xsd:date"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-contradictory_dates_and_math",
+        "jobId": "fixture-job-contradictory_dates_and_math",
+        "fieldKey": "invoice_date",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-contradictory_dates_and_math:doc:hasDueDate:extracted",
+      "subjectId": "doc:fixture-doc-contradictory_dates_and_math",
+      "predicate": "doc:hasDueDate",
+      "object": {
+        "kind": "literal",
+        "value": "2026-09-01",
+        "datatype": "xsd:date"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-contradictory_dates_and_math",
+        "jobId": "fixture-job-contradictory_dates_and_math",
+        "fieldKey": "due_date",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-contradictory_dates_and_math:doc:hasVendorName:extracted",
+      "subjectId": "doc:fixture-doc-contradictory_dates_and_math",
+      "predicate": "doc:hasVendorName",
+      "object": {
+        "kind": "literal",
+        "value": "Contoso Trading Pvt Ltd",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-contradictory_dates_and_math",
+        "jobId": "fixture-job-contradictory_dates_and_math",
+        "fieldKey": "vendor_name",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-contradictory_dates_and_math:doc:hasTotalAmountPaise:extracted",
+      "subjectId": "doc:fixture-doc-contradictory_dates_and_math",
+      "predicate": "doc:hasTotalAmountPaise",
+      "object": {
+        "kind": "literal",
+        "value": "15000000",
+        "datatype": "xsd:integer"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-contradictory_dates_and_math",
+        "jobId": "fixture-job-contradictory_dates_and_math",
+        "fieldKey": "total_amount",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-contradictory_dates_and_math:doc:hasSubtotalPaise:extracted",
+      "subjectId": "doc:fixture-doc-contradictory_dates_and_math",
+      "predicate": "doc:hasSubtotalPaise",
+      "object": {
+        "kind": "literal",
+        "value": "10000000",
+        "datatype": "xsd:integer"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-contradictory_dates_and_math",
+        "jobId": "fixture-job-contradictory_dates_and_math",
+        "fieldKey": "subtotal_amount",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-contradictory_dates_and_math:doc:hasTaxAmountPaise:extracted",
+      "subjectId": "doc:fixture-doc-contradictory_dates_and_math",
+      "predicate": "doc:hasTaxAmountPaise",
+      "object": {
+        "kind": "literal",
+        "value": "1800000",
+        "datatype": "xsd:integer"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-contradictory_dates_and_math",
+        "jobId": "fixture-job-contradictory_dates_and_math",
+        "fieldKey": "tax_amount",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-contradictory_dates_and_math:doc:hasCurrency:extracted",
+      "subjectId": "doc:fixture-doc-contradictory_dates_and_math",
+      "predicate": "doc:hasCurrency",
+      "object": {
+        "kind": "literal",
+        "value": "INR",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-contradictory_dates_and_math",
+        "jobId": "fixture-job-contradictory_dates_and_math",
+        "fieldKey": "total_amount",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-contradictory_dates_and_math:doc:hasVendorGstin:extracted",
+      "subjectId": "doc:fixture-doc-contradictory_dates_and_math",
+      "predicate": "doc:hasVendorGstin",
+      "object": {
+        "kind": "literal",
+        "value": "29ABCDE1234F1Z5",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-contradictory_dates_and_math",
+        "jobId": "fixture-job-contradictory_dates_and_math",
+        "fieldKey": "gstin",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "extracted"
+      }
+    }
+  ],
+  "inferredFacts": [
+    {
+      "id": "fact:doc:fixture-doc-contradictory_dates_and_math:doc:hasApprovalTier:inferred:RULE-DERIVE-APPROVAL-TIER",
+      "subjectId": "doc:fixture-doc-contradictory_dates_and_math",
+      "predicate": "doc:hasApprovalTier",
+      "object": {
+        "kind": "literal",
+        "value": "senior_signoff",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-contradictory_dates_and_math",
+        "jobId": "fixture-job-contradictory_dates_and_math",
+        "fieldKey": "total_amount",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "inferred",
+        "ruleId": "RULE-DERIVE-APPROVAL-TIER"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-contradictory_dates_and_math:doc:hasVendorStateCode:inferred:RULE-DERIVE-GST-STATE",
+      "subjectId": "doc:fixture-doc-contradictory_dates_and_math",
+      "predicate": "doc:hasVendorStateCode",
+      "object": {
+        "kind": "literal",
+        "value": "IN-KA (Karnataka)",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-contradictory_dates_and_math",
+        "jobId": "fixture-job-contradictory_dates_and_math",
+        "fieldKey": "gstin",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "inferred",
+        "ruleId": "RULE-DERIVE-GST-STATE"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "id": "finding:contradiction:RULE-DATE-ORDER:due_date+invoice_date",
+      "kind": "contradiction",
+      "severity": "error",
+      "ruleId": "RULE-DATE-ORDER",
+      "title": "Due date is before the invoice date",
+      "explanation": "Due date 2026-09-01 is before invoice date 2026-09-14.",
+      "premises": [
+        {
+          "factId": "fact:doc:fixture-doc-contradictory_dates_and_math:doc:hasDueDate:extracted",
+          "fieldKey": "due_date",
+          "label": "Due date",
+          "value": "2026-09-01",
+          "page": 1,
+          "source": "fixture"
+        },
+        {
+          "factId": "fact:doc:fixture-doc-contradictory_dates_and_math:doc:hasInvoiceDate:extracted",
+          "fieldKey": "invoice_date",
+          "label": "Invoice date",
+          "value": "2026-09-14",
+          "page": 1,
+          "source": "fixture"
+        }
+      ]
+    },
+    {
+      "id": "finding:contradiction:RULE-TOTAL-RECONCILIATION:subtotal_amount+tax_amount+total_amount",
+      "kind": "contradiction",
+      "severity": "error",
+      "ruleId": "RULE-TOTAL-RECONCILIATION",
+      "title": "Total does not reconcile",
+      "explanation": "Subtotal plus tax does not equal the total. Delta 3200000 paise.",
+      "premises": [
+        {
+          "factId": "fact:doc:fixture-doc-contradictory_dates_and_math:doc:hasSubtotalPaise:extracted",
+          "fieldKey": "subtotal_amount",
+          "label": "Subtotal",
+          "value": "10000000",
+          "page": 1,
+          "source": "fixture"
+        },
+        {
+          "factId": "fact:doc:fixture-doc-contradictory_dates_and_math:doc:hasTaxAmountPaise:extracted",
+          "fieldKey": "tax_amount",
+          "label": "Tax",
+          "value": "1800000",
+          "page": 1,
+          "source": "fixture"
+        },
+        {
+          "factId": "fact:doc:fixture-doc-contradictory_dates_and_math:doc:hasTotalAmountPaise:extracted",
+          "fieldKey": "total_amount",
+          "label": "Total",
+          "value": "15000000",
+          "page": 1,
+          "source": "fixture"
+        }
+      ]
+    },
+    {
+      "id": "finding:inferred_conclusion:RULE-DERIVE-APPROVAL-TIER:total_amount",
+      "kind": "inferred_conclusion",
+      "severity": "info",
+      "ruleId": "RULE-DERIVE-APPROVAL-TIER",
+      "title": "Derived conclusion",
+      "explanation": "Total 15000000 paise gives review tier senior_signoff.",
+      "premises": [
+        {
+          "factId": "fact:doc:fixture-doc-contradictory_dates_and_math:doc:hasTotalAmountPaise:extracted",
+          "fieldKey": "total_amount",
+          "label": "Total",
+          "value": "15000000",
+          "page": 1,
+          "source": "fixture"
+        }
+      ],
+      "conclusion": {
+        "predicate": "doc:hasApprovalTier",
+        "value": "senior_signoff"
+      }
+    },
+    {
+      "id": "finding:inferred_conclusion:RULE-DERIVE-GST-STATE:gstin",
+      "kind": "inferred_conclusion",
+      "severity": "info",
+      "ruleId": "RULE-DERIVE-GST-STATE",
+      "title": "Derived conclusion",
+      "explanation": "GSTIN prefix 29 gives state IN-KA (Karnataka).",
+      "premises": [
+        {
+          "factId": "fact:doc:fixture-doc-contradictory_dates_and_math:doc:hasVendorGstin:extracted",
+          "fieldKey": "gstin",
+          "label": "GSTIN",
+          "value": "29ABCDE1234F1Z5",
+          "page": 1,
+          "source": "fixture"
+        }
+      ],
+      "conclusion": {
+        "predicate": "doc:hasVendorStateCode",
+        "value": "IN-KA (Karnataka)"
+      }
+    }
+  ],
+  "turtleGraph": "@prefix doc: <http://example.invalid/doc#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n\n<http://example.invalid/id/fixture-doc-contradictory_dates_and_math>\n    doc:hasDocumentType \"Invoice\"^^xsd:string ;\n    doc:hasInvoiceNumber \"INV-2026-0901\"^^xsd:string ;\n    doc:hasInvoiceDate \"2026-09-14\"^^xsd:date ;\n    doc:hasDueDate \"2026-09-01\"^^xsd:date ;\n    doc:hasVendorName \"Contoso Trading Pvt Ltd\"^^xsd:string ;\n    doc:hasTotalAmountPaise \"15000000\"^^xsd:integer ;\n    doc:hasSubtotalPaise \"10000000\"^^xsd:integer ;\n    doc:hasTaxAmountPaise \"1800000\"^^xsd:integer ;\n    doc:hasCurrency \"INR\"^^xsd:string ;\n    doc:hasVendorGstin \"29ABCDE1234F1Z5\"^^xsd:string .\n\n# Inferred by the invoice-v1 rules\n<http://example.invalid/id/fixture-doc-contradictory_dates_and_math>\n    doc:hasApprovalTier \"senior_signoff\"^^xsd:string ;\n    doc:hasVendorStateCode \"IN-KA (Karnataka)\"^^xsd:string .\n",
+  "certificate": {
+    "status": "rejected",
+    "engineUsed": "ts-symbolic-engine",
+    "ontologyVersion": "invoice-v1",
+    "inputHash": "7d8af2408c90acbaaa71f102d768c2f98e1699d0f93a36533ca9c1d9e7483dfe",
+    "durationMs": 0
+  }
+}

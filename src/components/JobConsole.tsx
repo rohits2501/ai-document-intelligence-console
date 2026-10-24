@@ -23,6 +23,16 @@ const DocumentViewer = dynamic(() => import("./DocumentViewer").then((m) => m.Do
   ),
 });
 
+// Kept out of the first load; never requested when flags.inferenceLab is off.
+const InferencePanel = dynamic(() => import("./InferencePanel").then((m) => m.InferencePanel), {
+  ssr: false,
+  loading: () => (
+    <div role="status" style={{ color: "var(--text-muted)" }}>
+      Loading inference lab
+    </div>
+  ),
+});
+
 /**
  * The job console: streams live status from the event log over SSE, shows progress, a live event
  * timeline, the document with extraction overlays, and extracted fields as they arrive.
@@ -175,6 +185,19 @@ export function JobConsole({ jobId }: { jobId: string }) {
           )}
         </Panel>
       </div>
+
+      {flags.inferenceLab ? (
+        <Panel title="Inference lab" badge="Rule checked">
+          <ErrorBoundary label="The inference lab">
+            <InferencePanel
+              jobId={jobId}
+              fields={state.fields}
+              selectedKey={selected}
+              onSelectField={setSelected}
+            />
+          </ErrorBoundary>
+        </Panel>
+      ) : null}
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-4)" }}>
         <Panel title="Event timeline" tourId="event-timeline">
