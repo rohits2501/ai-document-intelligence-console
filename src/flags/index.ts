@@ -17,6 +17,8 @@ export interface Flags {
   durableStore: boolean;
   /** On-screen perf HUD and fixture link. Default off; bench builds turn it on. */
   perfHud: boolean;
+  /** Inference lab panel on the job console. Gates the panel only, not the preview route. */
+  inferenceLab: boolean;
 }
 
 function bool(value: string | undefined, fallback: boolean): boolean {
@@ -31,4 +33,5 @@ export const flags: Flags = {
   durableStore:
     process.env.NODE_ENV === "test" ? false : bool(process.env.FEATURE_DURABLE_STORE, true),
   perfHud: bool(process.env.NEXT_PUBLIC_PERF_HUD, false),
+  inferenceLab: bool(process.env.NEXT_PUBLIC_FEATURE_INFERENCE_LAB, true),
 };

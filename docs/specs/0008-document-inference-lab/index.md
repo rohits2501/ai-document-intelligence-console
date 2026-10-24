@@ -1,21 +1,15 @@
 # 0008. Document inference lab
 
 **Date**: 2026-10-24
-**Status**: Proposed
+**Status**: In Progress
 **Mode**: FEATURE
 **Feature**: Document inference lab (scope #18)
+
+_Decision history: [rationale.md](rationale.md)._
 
 ## Summary
 
 You get a document inference lab on the job console. It turns extracted fields, plus any review edits you saved, into facts linked to their source, checks those facts, and shows the conclusions that follow. A missing fact stays unknown, and the check does not prove the scan, the document, or a payment. The default checker is plain TypeScript so a visitor can run it with no extra binary.
-
-## Context
-
-An operator can already drop a document, watch a job, and edit the extracted fields. Those fields are candidates. Nothing in the console checks whether they can stand together, or what follows from them. A due date can come before the invoice date. A total can disagree with its parts. A required field can be missing.
-
-The demo has to keep working for a visitor with no extra software, including a later deploy of the Next.js app to Vercel Hobby. That host cannot hold a native binary, a long running process, or the local SQLite file. Idle cost has to stay near zero, because the page should remain up when nobody is running a check. Inferred conclusions have to stay locked by tests, which is why this feature is Beta.
-
-If this stays undecided, a build would have to guess. It might write conclusions into the job event log, treat a missing field as a false value, or describe a passed check as proof that a claim should be paid. It might also pick a host, a binary, or a language model on its own.
 
 ## Requirements
 
@@ -49,64 +43,6 @@ If this stays undecided, a build would have to guess. It might write conclusions
 - **AC-17**: The preview route runs inside `span()` with `request_id`, `job_id`, and `document_id`.
 - **AC-18**: The preview body accepts `jobId` and an optional `scenarioPreset` of `live_job` (the default), `valid_high_value_invoice`, `contradictory_dates_and_math`, or `missing_mandatory_evidence`. A synthetic preset uses the fixture fields and does not write them onto the job or the review.
 
-## Options considered
-
-### Option 1: TypeScript by default, a local binary when you ask, HTTP later
-
-One `InferenceEngine` interface. The default implementation is a TypeScript checker with no added dependency. A local `open-ontologies` binary is a second implementation, used only when config asks for it. An HTTP implementation is named now and returns a clear not configured error until a later host exists.
-
-**Pros**:
-
-- The hosted demo and CI run with no binary.
-- A later host can return the same result type.
-- Idle cost stays near zero.
-
-**Cons**:
-
-- The invoice rules exist twice, in TypeScript and in the ontology the binary runs.
-- The binary path works only on a machine that has it.
-
-### Option 2: A native binary on every host
-
-Every environment, including the hosted demo and CI, runs the Rust binary.
-
-**Pros**:
-
-- One checker implements the rules.
-
-**Cons**:
-
-- Vercel Hobby cannot hold that binary, a long running process, or the local SQLite file.
-- A visitor or a CI run with no Rust install cannot open the lab.
-
-### Option 3: A Cloud Run service in this phase
-
-The preview route POSTs the same input to Google Cloud Run and parses the same result type. Minimum instances stay at `0`.
-
-**Pros**:
-
-- The heavy checker stays off the web app.
-- Scale to zero removes idle compute cost.
-
-**Cons**:
-
-- This phase would need a deploy, a public URL, and a quota design before the lab can be shown.
-- Scale to zero does not cap a burst of requests, and a cold start makes the demo wait.
-
-### Option 4: A live language model
-
-A model reads the fields and writes the conclusion.
-
-**Pros**:
-
-- The wording can be flexible.
-
-**Cons**:
-
-- The conclusion is not a repeatable check of named rules.
-- A missing fact can be filled in.
-- The demo would depend on a model key and a per call cost.
-
 ## Decision
 
 **Chosen option**: Option 1: TypeScript by default, a local binary when you ask, HTTP later
@@ -114,14 +50,6 @@ A model reads the fields and writes the conclusion.
 The lab gets one `InferenceEngine` interface in `src/inference/`. `DeterministicTsInferenceEngine` is the default. `OpenOntologiesCliEngine` is local only. The HTTP backend is named and, in this phase, returns a not configured error.
 
 This phase does not add TanStack AI, a live language model, a second ontology, or a Cloud Run deploy.
-
-## Rationale
-
-The console is a portfolio demo that already runs on a mock extractor and a local job store. The lab has to sit beside that, on a machine with no extra install, and still be the thing a later Vercel Hobby deploy can serve. A TypeScript checker meets that force. The binary stays an opt in for a local machine, because putting it on Vercel would break the host constraint in Context.
-
-The result type is fixed now so a later Cloud Run adapter can return the same object without a rewrite of the panel. Shipping that host in this phase would spend the demo on a deploy, a cold start, and a burst that scale to zero does not cap. A language model would fight the other force in Context: a missing fact must stay unknown, and a conclusion must be locked by tests.
-
-Extraction keeps proposing candidate fields. The event log stays the source of truth for the job. Inference reads that log and the saved review, then stops.
 
 ## Feature design
 
@@ -210,12 +138,12 @@ Rules. Each id is the string in this table. Severity: `shacl_violation` and `con
 
 | Rule id | What it checks | Finding |
 |---|---|---|
-| `SHACL-INV-REQUIRED` | The invoice subject needs `doc:hasInvoiceNumber`, `doc:hasInvoiceDate`, `doc:hasVendorName`, and `doc:hasTotalAmountPaise` (`sh:minCount 1` on each). | One `shacl_violation` and one `missing_evidence` per absent required predicate. Title `Missing required field`. Explanation `Required field {label} is missing.` |
+| `SHACL-INV-REQUIRED` | The invoice subject needs `doc:hasInvoiceNumber`, `doc:hasInvoiceDate`, `doc:hasVendorName`, and `doc:hasTotalAmountPaise` (`sh:minCount 1` on each). | One `shacl_violation` and one `missing_evidence` per absent required predicate. Title `Missing required field`. Explanation `Required field {label} is missing.` `doc:hasVendorGstin` is not a required predicate, so an absent GSTIN is not a failure of this rule. |
 | `SHACL-GSTIN-FORMAT` | A present `doc:hasVendorGstin` matches `^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$`. | One `shacl_violation` when the fact exists and fails the pattern. Title `GSTIN format is not valid`. Explanation `GSTIN {value} does not match the 15 character pattern.` An absent GSTIN does not fail this rule. |
 | `RULE-DATE-ORDER` | Both date facts exist and the due date is strictly before the invoice date. | One `contradiction`. Premises are both fields. Title `Due date is before the invoice date`. Explanation `Due date {due} is before invoice date {invoice}.` Equal dates produce no finding. |
 | `RULE-TOTAL-RECONCILIATION` | Subtotal, tax, and total facts all exist, and `subtotal + tax !== total`, in paise. | One `contradiction`. Explanation `Subtotal plus tax does not equal the total. Delta {delta} paise.` Delta is `total - (subtotal + tax)`, signed. A missing part does not become `0`. |
 | `RULE-DERIVE-APPROVAL-TIER` | `doc:hasTotalAmountPaise` exists. | Inferred literal `doc:hasApprovalTier`: `senior_signoff` when paise is `>= 10000000` (`₹1,00,000.00`), otherwise `standard_signoff`. Premise is the total fact. Confidence is that premise's confidence. Title `Derived conclusion`. Explanation `Total {amount} gives review tier {tier}.` |
-| `RULE-DERIVE-GST-STATE` | `doc:hasVendorGstin` exists, matches the format pattern, and the first two characters are `29`. | Inferred literal `doc:hasVendorStateCode` `IN-KA (Karnataka)`. Premise is the GSTIN fact. Confidence is that premise's confidence. Explanation `GSTIN prefix 29 gives state IN-KA (Karnataka).` Any other prefix that passes the pattern produces `missing_evidence` (`State code is unknown for this GSTIN prefix.`) and no state fact. A failed pattern produces no state fact. |
+| `RULE-DERIVE-GST-STATE` | `doc:hasVendorGstin` exists, matches the format pattern, and the first two characters are `29`. | Inferred literal `doc:hasVendorStateCode` `IN-KA (Karnataka)`. Premise is the GSTIN fact. Confidence is that premise's confidence. Explanation `GSTIN prefix 29 gives state IN-KA (Karnataka).` Any other prefix that passes the pattern produces `missing_evidence` (`State code is unknown for this GSTIN prefix.`) and no state fact. A failed pattern produces no state fact. An absent `doc:hasVendorGstin` (as in `missing_mandatory_evidence`) produces one `missing_evidence` finding with severity `warning`, title `GSTIN is missing`, and explanation `GSTIN is missing, so no state can be derived.` It emits no GSTIN fact and no state fact. A present GSTIN follows the cases above. |
 | `RULE-PROVENANCE-CONFIDENCE` | A premise of an inferred fact has confidence `< 0.75`, and the live review field for that key is missing or `approved` is false. | One `missing_evidence` warning per such premise. The inferred fact stays. Explanation `{label} has confidence {confidence} and is not approved. {derived label} depends on it.` Synthetic presets have no review, so this rule sees them as not approved. |
 
 The tier vocabulary is `senior_signoff` and `standard_signoff`. There is no value `senior_reviewer_required`.
@@ -372,14 +300,14 @@ Document the three engine variables and the flag in `.env.example` with one line
 
 Tracer Bullet. The first tasks stand up one thread: a live job field becomes a fact, the default checker returns a result, and the preview route reads the job without writing. Later tasks thicken the rules, the graph, the fixtures, the other engines, and the panel.
 
-1. Add `src/inference/types.ts` with the schemas in this spec. Do not change `ExtractedField`, `JobEvent`, or `ExtractionProvider`. Satisfies **AC-2**.
-2. Add `src/inference/normalize-facts.ts` and `POST /api/inference/preview` for `live_job`, using `jobReducer`, the saved review, and `DeterministicTsInferenceEngine` for the required field check, the tier, and the state. The route writes nothing. Satisfies **AC-1**, **AC-3**, **AC-4**, **AC-5**, **AC-6**.
-3. Finish the TypeScript rule table: GSTIN format, date order, total reconciliation, low confidence, and the certificate status. Satisfies **AC-9**, **AC-10**, **AC-11**, **AC-12**, **AC-13**, **AC-15**.
-4. Add `src/inference/ontology.ts` and `src/inference/build-graph.ts`: Turtle, escaping, and `inputHash`. Satisfies **AC-15**.
-5. Add the four fixtures and their committed expected results in `src/inference/fixtures.ts`, and honor `scenarioPreset` on the preview route without writing. Satisfies **AC-9**, **AC-10**, **AC-11**, **AC-14**, **AC-18**.
-6. Add `selectEngine`, `OpenOntologiesCliEngine` (`execFile`, abort, timeout, per run directory, error classification), and the `http` not configured branch. Satisfies **AC-6**, **AC-7**, **AC-8**.
-7. Add `flags.inferenceLab`, the `.env.example` lines, and `src/components/InferencePanel.tsx` loaded from `JobConsole` with `next/dynamic`. Include the three sections, the scenario selector, premise selection, the saved example banner, token colors, and a budget check. Satisfies **AC-14**, **AC-16**.
-8. Wrap the preview handler in `span("inference.preview", ...)`. Satisfies **AC-17**.
+1. [x] Add `src/inference/types.ts` with the schemas in this spec. Do not change `ExtractedField`, `JobEvent`, or `ExtractionProvider`. Satisfies **AC-2**.
+2. [x] Add `src/inference/normalize-facts.ts` and `POST /api/inference/preview` for `live_job`, using `jobReducer`, the saved review, and `DeterministicTsInferenceEngine` for the required field check, the tier, and the state. The route writes nothing. Satisfies **AC-1**, **AC-3**, **AC-4**, **AC-5**, **AC-6**.
+3. [x] Finish the TypeScript rule table: GSTIN format, date order, total reconciliation, low confidence, and the certificate status. Satisfies **AC-9**, **AC-10**, **AC-11**, **AC-12**, **AC-13**, **AC-15**.
+4. [x] Add `src/inference/ontology.ts` and `src/inference/build-graph.ts`: Turtle, escaping, and `inputHash`. Satisfies **AC-15**.
+5. [x] Add the four fixtures and their committed expected results in `src/inference/fixtures.ts`, and honor `scenarioPreset` on the preview route without writing. Satisfies **AC-9**, **AC-10**, **AC-11**, **AC-14**, **AC-18**.
+6. [x] Add `selectEngine`, `OpenOntologiesCliEngine` (`execFile`, abort, timeout, per run directory, error classification), and the `http` not configured branch. Satisfies **AC-6**, **AC-7**, **AC-8**.
+7. [x] Add `flags.inferenceLab`, the `.env.example` lines, and `src/components/InferencePanel.tsx` loaded from `JobConsole` with `next/dynamic`. Include the three sections, the scenario selector, premise selection, the saved example banner, token colors, and a budget check. Satisfies **AC-14**, **AC-16**.
+8. [x] Wrap the preview handler in `span("inference.preview", ...)`. Satisfies **AC-17**.
 
 ## Consequences
 

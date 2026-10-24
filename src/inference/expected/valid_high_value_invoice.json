@@ -1,0 +1,304 @@
+{
+  "jobId": "fixture-job-valid_high_value_invoice",
+  "documentId": "fixture-doc-valid_high_value_invoice",
+  "canonicalFacts": [
+    {
+      "id": "fact:doc:fixture-doc-valid_high_value_invoice:doc:hasDocumentType:extracted",
+      "subjectId": "doc:fixture-doc-valid_high_value_invoice",
+      "predicate": "doc:hasDocumentType",
+      "object": {
+        "kind": "literal",
+        "value": "Invoice",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-valid_high_value_invoice",
+        "jobId": "fixture-job-valid_high_value_invoice",
+        "fieldKey": "document_type",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-valid_high_value_invoice:doc:hasInvoiceNumber:extracted",
+      "subjectId": "doc:fixture-doc-valid_high_value_invoice",
+      "predicate": "doc:hasInvoiceNumber",
+      "object": {
+        "kind": "literal",
+        "value": "INV-2026-1001",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-valid_high_value_invoice",
+        "jobId": "fixture-job-valid_high_value_invoice",
+        "fieldKey": "invoice_number",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-valid_high_value_invoice:doc:hasInvoiceDate:extracted",
+      "subjectId": "doc:fixture-doc-valid_high_value_invoice",
+      "predicate": "doc:hasInvoiceDate",
+      "object": {
+        "kind": "literal",
+        "value": "2026-09-14",
+        "datatype": "xsd:date"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-valid_high_value_invoice",
+        "jobId": "fixture-job-valid_high_value_invoice",
+        "fieldKey": "invoice_date",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-valid_high_value_invoice:doc:hasDueDate:extracted",
+      "subjectId": "doc:fixture-doc-valid_high_value_invoice",
+      "predicate": "doc:hasDueDate",
+      "object": {
+        "kind": "literal",
+        "value": "2026-10-14",
+        "datatype": "xsd:date"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-valid_high_value_invoice",
+        "jobId": "fixture-job-valid_high_value_invoice",
+        "fieldKey": "due_date",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-valid_high_value_invoice:doc:hasVendorName:extracted",
+      "subjectId": "doc:fixture-doc-valid_high_value_invoice",
+      "predicate": "doc:hasVendorName",
+      "object": {
+        "kind": "literal",
+        "value": "High Value Supplies Pvt Ltd",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-valid_high_value_invoice",
+        "jobId": "fixture-job-valid_high_value_invoice",
+        "fieldKey": "vendor_name",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-valid_high_value_invoice:doc:hasTotalAmountPaise:extracted",
+      "subjectId": "doc:fixture-doc-valid_high_value_invoice",
+      "predicate": "doc:hasTotalAmountPaise",
+      "object": {
+        "kind": "literal",
+        "value": "11800000",
+        "datatype": "xsd:integer"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-valid_high_value_invoice",
+        "jobId": "fixture-job-valid_high_value_invoice",
+        "fieldKey": "total_amount",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-valid_high_value_invoice:doc:hasSubtotalPaise:extracted",
+      "subjectId": "doc:fixture-doc-valid_high_value_invoice",
+      "predicate": "doc:hasSubtotalPaise",
+      "object": {
+        "kind": "literal",
+        "value": "10000000",
+        "datatype": "xsd:integer"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-valid_high_value_invoice",
+        "jobId": "fixture-job-valid_high_value_invoice",
+        "fieldKey": "subtotal_amount",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-valid_high_value_invoice:doc:hasTaxAmountPaise:extracted",
+      "subjectId": "doc:fixture-doc-valid_high_value_invoice",
+      "predicate": "doc:hasTaxAmountPaise",
+      "object": {
+        "kind": "literal",
+        "value": "1800000",
+        "datatype": "xsd:integer"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-valid_high_value_invoice",
+        "jobId": "fixture-job-valid_high_value_invoice",
+        "fieldKey": "tax_amount",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-valid_high_value_invoice:doc:hasCurrency:extracted",
+      "subjectId": "doc:fixture-doc-valid_high_value_invoice",
+      "predicate": "doc:hasCurrency",
+      "object": {
+        "kind": "literal",
+        "value": "INR",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-valid_high_value_invoice",
+        "jobId": "fixture-job-valid_high_value_invoice",
+        "fieldKey": "total_amount",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-valid_high_value_invoice:doc:hasVendorGstin:extracted",
+      "subjectId": "doc:fixture-doc-valid_high_value_invoice",
+      "predicate": "doc:hasVendorGstin",
+      "object": {
+        "kind": "literal",
+        "value": "29ABCDE1234F1Z5",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-valid_high_value_invoice",
+        "jobId": "fixture-job-valid_high_value_invoice",
+        "fieldKey": "gstin",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "extracted"
+      }
+    }
+  ],
+  "inferredFacts": [
+    {
+      "id": "fact:doc:fixture-doc-valid_high_value_invoice:doc:hasApprovalTier:inferred:RULE-DERIVE-APPROVAL-TIER",
+      "subjectId": "doc:fixture-doc-valid_high_value_invoice",
+      "predicate": "doc:hasApprovalTier",
+      "object": {
+        "kind": "literal",
+        "value": "senior_signoff",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-valid_high_value_invoice",
+        "jobId": "fixture-job-valid_high_value_invoice",
+        "fieldKey": "total_amount",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "inferred",
+        "ruleId": "RULE-DERIVE-APPROVAL-TIER"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-valid_high_value_invoice:doc:hasVendorStateCode:inferred:RULE-DERIVE-GST-STATE",
+      "subjectId": "doc:fixture-doc-valid_high_value_invoice",
+      "predicate": "doc:hasVendorStateCode",
+      "object": {
+        "kind": "literal",
+        "value": "IN-KA (Karnataka)",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.96,
+      "provenance": {
+        "documentId": "fixture-doc-valid_high_value_invoice",
+        "jobId": "fixture-job-valid_high_value_invoice",
+        "fieldKey": "gstin",
+        "page": 1,
+        "bbox": null,
+        "source": "fixture",
+        "origin": "inferred",
+        "ruleId": "RULE-DERIVE-GST-STATE"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "id": "finding:inferred_conclusion:RULE-DERIVE-APPROVAL-TIER:total_amount",
+      "kind": "inferred_conclusion",
+      "severity": "info",
+      "ruleId": "RULE-DERIVE-APPROVAL-TIER",
+      "title": "Derived conclusion",
+      "explanation": "Total 11800000 paise gives review tier senior_signoff.",
+      "premises": [
+        {
+          "factId": "fact:doc:fixture-doc-valid_high_value_invoice:doc:hasTotalAmountPaise:extracted",
+          "fieldKey": "total_amount",
+          "label": "Total",
+          "value": "11800000",
+          "page": 1,
+          "source": "fixture"
+        }
+      ],
+      "conclusion": {
+        "predicate": "doc:hasApprovalTier",
+        "value": "senior_signoff"
+      }
+    },
+    {
+      "id": "finding:inferred_conclusion:RULE-DERIVE-GST-STATE:gstin",
+      "kind": "inferred_conclusion",
+      "severity": "info",
+      "ruleId": "RULE-DERIVE-GST-STATE",
+      "title": "Derived conclusion",
+      "explanation": "GSTIN prefix 29 gives state IN-KA (Karnataka).",
+      "premises": [
+        {
+          "factId": "fact:doc:fixture-doc-valid_high_value_invoice:doc:hasVendorGstin:extracted",
+          "fieldKey": "gstin",
+          "label": "GSTIN",
+          "value": "29ABCDE1234F1Z5",
+          "page": 1,
+          "source": "fixture"
+        }
+      ],
+      "conclusion": {
+        "predicate": "doc:hasVendorStateCode",
+        "value": "IN-KA (Karnataka)"
+      }
+    }
+  ],
+  "turtleGraph": "@prefix doc: <http://example.invalid/doc#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n\n<http://example.invalid/id/fixture-doc-valid_high_value_invoice>\n    doc:hasDocumentType \"Invoice\"^^xsd:string ;\n    doc:hasInvoiceNumber \"INV-2026-1001\"^^xsd:string ;\n    doc:hasInvoiceDate \"2026-09-14\"^^xsd:date ;\n    doc:hasDueDate \"2026-10-14\"^^xsd:date ;\n    doc:hasVendorName \"High Value Supplies Pvt Ltd\"^^xsd:string ;\n    doc:hasTotalAmountPaise \"11800000\"^^xsd:integer ;\n    doc:hasSubtotalPaise \"10000000\"^^xsd:integer ;\n    doc:hasTaxAmountPaise \"1800000\"^^xsd:integer ;\n    doc:hasCurrency \"INR\"^^xsd:string ;\n    doc:hasVendorGstin \"29ABCDE1234F1Z5\"^^xsd:string .\n\n# Inferred by the invoice-v1 rules\n<http://example.invalid/id/fixture-doc-valid_high_value_invoice>\n    doc:hasApprovalTier \"senior_signoff\"^^xsd:string ;\n    doc:hasVendorStateCode \"IN-KA (Karnataka)\"^^xsd:string .\n",
+  "certificate": {
+    "status": "verified",
+    "engineUsed": "ts-symbolic-engine",
+    "ontologyVersion": "invoice-v1",
+    "inputHash": "679f3e920e828d7ce9c7f7dde7eb210329b9b3fadc35723acc486bb180ebe17e",
+    "durationMs": 0
+  }
+}

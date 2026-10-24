@@ -1,0 +1,325 @@
+{
+  "jobId": "fixture-job-baseline_mock",
+  "documentId": "fixture-doc-baseline_mock",
+  "canonicalFacts": [
+    {
+      "id": "fact:doc:fixture-doc-baseline_mock:doc:hasDocumentType:extracted",
+      "subjectId": "doc:fixture-doc-baseline_mock",
+      "predicate": "doc:hasDocumentType",
+      "object": {
+        "kind": "literal",
+        "value": "Invoice",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.98,
+      "provenance": {
+        "documentId": "fixture-doc-baseline_mock",
+        "jobId": "fixture-job-baseline_mock",
+        "fieldKey": "document_type",
+        "page": 1,
+        "bbox": {
+          "x": 0.08,
+          "y": 0.06,
+          "w": 0.3,
+          "h": 0.04
+        },
+        "source": "p1",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-baseline_mock:doc:hasInvoiceNumber:extracted",
+      "subjectId": "doc:fixture-doc-baseline_mock",
+      "predicate": "doc:hasInvoiceNumber",
+      "object": {
+        "kind": "literal",
+        "value": "INV-2026-0417",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.95,
+      "provenance": {
+        "documentId": "fixture-doc-baseline_mock",
+        "jobId": "fixture-job-baseline_mock",
+        "fieldKey": "invoice_number",
+        "page": 1,
+        "bbox": {
+          "x": 0.62,
+          "y": 0.08,
+          "w": 0.28,
+          "h": 0.04
+        },
+        "source": "p1",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-baseline_mock:doc:hasInvoiceDate:extracted",
+      "subjectId": "doc:fixture-doc-baseline_mock",
+      "predicate": "doc:hasInvoiceDate",
+      "object": {
+        "kind": "literal",
+        "value": "2026-09-14",
+        "datatype": "xsd:date"
+      },
+      "confidence": 0.92,
+      "provenance": {
+        "documentId": "fixture-doc-baseline_mock",
+        "jobId": "fixture-job-baseline_mock",
+        "fieldKey": "invoice_date",
+        "page": 1,
+        "bbox": {
+          "x": 0.62,
+          "y": 0.14,
+          "w": 0.24,
+          "h": 0.04
+        },
+        "source": "p1",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-baseline_mock:doc:hasVendorName:extracted",
+      "subjectId": "doc:fixture-doc-baseline_mock",
+      "predicate": "doc:hasVendorName",
+      "object": {
+        "kind": "literal",
+        "value": "Northwind Logistics Pvt Ltd",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.89,
+      "provenance": {
+        "documentId": "fixture-doc-baseline_mock",
+        "jobId": "fixture-job-baseline_mock",
+        "fieldKey": "vendor_name",
+        "page": 1,
+        "bbox": {
+          "x": 0.08,
+          "y": 0.2,
+          "w": 0.44,
+          "h": 0.05
+        },
+        "source": "p1",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-baseline_mock:doc:hasTotalAmountPaise:extracted",
+      "subjectId": "doc:fixture-doc-baseline_mock",
+      "predicate": "doc:hasTotalAmountPaise",
+      "object": {
+        "kind": "literal",
+        "value": "12450000",
+        "datatype": "xsd:integer"
+      },
+      "confidence": 0.74,
+      "provenance": {
+        "documentId": "fixture-doc-baseline_mock",
+        "jobId": "fixture-job-baseline_mock",
+        "fieldKey": "total_amount",
+        "page": 1,
+        "bbox": {
+          "x": 0.62,
+          "y": 0.82,
+          "w": 0.28,
+          "h": 0.05
+        },
+        "source": "p1",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-baseline_mock:doc:hasCurrency:extracted",
+      "subjectId": "doc:fixture-doc-baseline_mock",
+      "predicate": "doc:hasCurrency",
+      "object": {
+        "kind": "literal",
+        "value": "INR",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.74,
+      "provenance": {
+        "documentId": "fixture-doc-baseline_mock",
+        "jobId": "fixture-job-baseline_mock",
+        "fieldKey": "total_amount",
+        "page": 1,
+        "bbox": {
+          "x": 0.62,
+          "y": 0.82,
+          "w": 0.28,
+          "h": 0.05
+        },
+        "source": "p1",
+        "origin": "extracted"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-baseline_mock:doc:hasVendorGstin:extracted",
+      "subjectId": "doc:fixture-doc-baseline_mock",
+      "predicate": "doc:hasVendorGstin",
+      "object": {
+        "kind": "literal",
+        "value": "29ABCDE1234F1Z5",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.63,
+      "provenance": {
+        "documentId": "fixture-doc-baseline_mock",
+        "jobId": "fixture-job-baseline_mock",
+        "fieldKey": "gstin",
+        "page": 1,
+        "bbox": {
+          "x": 0.08,
+          "y": 0.86,
+          "w": 0.34,
+          "h": 0.04
+        },
+        "source": "p1",
+        "origin": "extracted"
+      }
+    }
+  ],
+  "inferredFacts": [
+    {
+      "id": "fact:doc:fixture-doc-baseline_mock:doc:hasApprovalTier:inferred:RULE-DERIVE-APPROVAL-TIER",
+      "subjectId": "doc:fixture-doc-baseline_mock",
+      "predicate": "doc:hasApprovalTier",
+      "object": {
+        "kind": "literal",
+        "value": "senior_signoff",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.74,
+      "provenance": {
+        "documentId": "fixture-doc-baseline_mock",
+        "jobId": "fixture-job-baseline_mock",
+        "fieldKey": "total_amount",
+        "page": 1,
+        "bbox": {
+          "x": 0.62,
+          "y": 0.82,
+          "w": 0.28,
+          "h": 0.05
+        },
+        "source": "p1",
+        "origin": "inferred",
+        "ruleId": "RULE-DERIVE-APPROVAL-TIER"
+      }
+    },
+    {
+      "id": "fact:doc:fixture-doc-baseline_mock:doc:hasVendorStateCode:inferred:RULE-DERIVE-GST-STATE",
+      "subjectId": "doc:fixture-doc-baseline_mock",
+      "predicate": "doc:hasVendorStateCode",
+      "object": {
+        "kind": "literal",
+        "value": "IN-KA (Karnataka)",
+        "datatype": "xsd:string"
+      },
+      "confidence": 0.63,
+      "provenance": {
+        "documentId": "fixture-doc-baseline_mock",
+        "jobId": "fixture-job-baseline_mock",
+        "fieldKey": "gstin",
+        "page": 1,
+        "bbox": {
+          "x": 0.08,
+          "y": 0.86,
+          "w": 0.34,
+          "h": 0.04
+        },
+        "source": "p1",
+        "origin": "inferred",
+        "ruleId": "RULE-DERIVE-GST-STATE"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "id": "finding:inferred_conclusion:RULE-DERIVE-APPROVAL-TIER:total_amount",
+      "kind": "inferred_conclusion",
+      "severity": "info",
+      "ruleId": "RULE-DERIVE-APPROVAL-TIER",
+      "title": "Derived conclusion",
+      "explanation": "Total 12450000 paise gives review tier senior_signoff.",
+      "premises": [
+        {
+          "factId": "fact:doc:fixture-doc-baseline_mock:doc:hasTotalAmountPaise:extracted",
+          "fieldKey": "total_amount",
+          "label": "Total",
+          "value": "12450000",
+          "page": 1,
+          "source": "p1"
+        }
+      ],
+      "conclusion": {
+        "predicate": "doc:hasApprovalTier",
+        "value": "senior_signoff"
+      }
+    },
+    {
+      "id": "finding:inferred_conclusion:RULE-DERIVE-GST-STATE:gstin",
+      "kind": "inferred_conclusion",
+      "severity": "info",
+      "ruleId": "RULE-DERIVE-GST-STATE",
+      "title": "Derived conclusion",
+      "explanation": "GSTIN prefix 29 gives state IN-KA (Karnataka).",
+      "premises": [
+        {
+          "factId": "fact:doc:fixture-doc-baseline_mock:doc:hasVendorGstin:extracted",
+          "fieldKey": "gstin",
+          "label": "GSTIN",
+          "value": "29ABCDE1234F1Z5",
+          "page": 1,
+          "source": "p1"
+        }
+      ],
+      "conclusion": {
+        "predicate": "doc:hasVendorStateCode",
+        "value": "IN-KA (Karnataka)"
+      }
+    },
+    {
+      "id": "finding:missing_evidence:RULE-PROVENANCE-CONFIDENCE:total_amount:doc:hasApprovalTier",
+      "kind": "missing_evidence",
+      "severity": "warning",
+      "ruleId": "RULE-PROVENANCE-CONFIDENCE",
+      "title": "Low confidence premise",
+      "explanation": "Total has confidence 0.74 and is not approved. Review tier depends on it.",
+      "premises": [
+        {
+          "factId": "fact:doc:fixture-doc-baseline_mock:doc:hasTotalAmountPaise:extracted",
+          "fieldKey": "total_amount",
+          "label": "Total",
+          "value": "12450000",
+          "page": 1,
+          "source": "p1"
+        }
+      ]
+    },
+    {
+      "id": "finding:missing_evidence:RULE-PROVENANCE-CONFIDENCE:gstin:doc:hasVendorStateCode",
+      "kind": "missing_evidence",
+      "severity": "warning",
+      "ruleId": "RULE-PROVENANCE-CONFIDENCE",
+      "title": "Low confidence premise",
+      "explanation": "GSTIN has confidence 0.63 and is not approved. Vendor state code depends on it.",
+      "premises": [
+        {
+          "factId": "fact:doc:fixture-doc-baseline_mock:doc:hasVendorGstin:extracted",
+          "fieldKey": "gstin",
+          "label": "GSTIN",
+          "value": "29ABCDE1234F1Z5",
+          "page": 1,
+          "source": "p1"
+        }
+      ]
+    }
+  ],
+  "turtleGraph": "@prefix doc: <http://example.invalid/doc#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n\n<http://example.invalid/id/fixture-doc-baseline_mock>\n    doc:hasDocumentType \"Invoice\"^^xsd:string ;\n    doc:hasInvoiceNumber \"INV-2026-0417\"^^xsd:string ;\n    doc:hasInvoiceDate \"2026-09-14\"^^xsd:date ;\n    doc:hasVendorName \"Northwind Logistics Pvt Ltd\"^^xsd:string ;\n    doc:hasTotalAmountPaise \"12450000\"^^xsd:integer ;\n    doc:hasCurrency \"INR\"^^xsd:string ;\n    doc:hasVendorGstin \"29ABCDE1234F1Z5\"^^xsd:string .\n\n# Inferred by the invoice-v1 rules\n<http://example.invalid/id/fixture-doc-baseline_mock>\n    doc:hasApprovalTier \"senior_signoff\"^^xsd:string ;\n    doc:hasVendorStateCode \"IN-KA (Karnataka)\"^^xsd:string .\n",
+  "certificate": {
+    "status": "verified",
+    "engineUsed": "ts-symbolic-engine",
+    "ontologyVersion": "invoice-v1",
+    "inputHash": "d2c5df6b07d59241de8e0a3d537b57e2aaaef274d155331fd12b1085c2b6a78c",
+    "durationMs": 0
+  }
+}
