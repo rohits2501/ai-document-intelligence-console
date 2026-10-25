@@ -112,9 +112,3 @@ Next.js 14 (App Router), React 18, TypeScript (strict), SSE via native `EventSou
 - Retention is still unbounded (a follow-up). The default provider is a **mock**; extraction values
   are illustrative fixtures.
 - No auth/accounts (single-operator demo).
-
-## Built with a spec-driven workflow
-
-This repo was built with the nine JS Mastery workflow skills in `.agents/skills/`
-(`/scope → /architect → /develop → /check → /test → /sync → /document`), so the history reads as
-decisions (`docs/specs/`), a living plan (`docs/scope/`), and the code that implements them.
