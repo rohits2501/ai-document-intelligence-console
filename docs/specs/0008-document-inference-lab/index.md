@@ -338,3 +338,4 @@ Tracer Bullet. The first tasks stand up one thread: a live job field becomes a f
 - [ ] Add GST state rows beyond prefix `29` only when a later spec names them.
 - [ ] Prove the real binary returns the same findings as the TypeScript engine. This phase only classifies adapter success and failure.
 - [ ] A producer for `doc:hasComplianceStatus`, if one is ever needed, belongs in a later spec.
+- [ ] Perception and cross document knowledge are recorded in spec [0009](../0009-document-knowledge-layers/index.md). That spec does not change this lab, and it does not allow a live language model here.
