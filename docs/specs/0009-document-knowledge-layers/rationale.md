@@ -66,21 +66,21 @@ Add a knowledge base that uploads documents and lets an agent search and cite pa
 
 **Cons**:
 
-- Passage search cannot tell you that you found every matching record. Sarvam's own write up says this, and their Cowork knowledge base docs describe only this surface.
+- Passage search cannot tell you that you found every matching record. A knowledge base that only searches and cites describes only this surface.
 - Several frameworks at once splits the work before one question is chosen.
 - None of them is the invoice rule check.
 
 ## Rationale
 
-Option 1 is the one that matches the forces in Context. The console already answers where the evidence is and who decided. The invoice rules already answer whether the facts satisfy the named checks. Those two stay. A harness is the right shape for reading pages, because the frontier products below all split layout, extraction, and grounding, and because a large model is the expensive last step rather than the reader. A knowledge tree is the right shape for a later cross document question, and only together with the vocabulary you already have, because a tree without that query is the expensive incomplete option in the Sarvam runs.
+Option 1 is the one that matches the forces in Context. The console already answers where the evidence is and who decided. The invoice rules already answer whether the facts satisfy the named checks. Those two stay. A harness is the right shape for reading pages, because the frontier products below all split layout, extraction, and grounding, and because a large model is the expensive last step rather than the reader. A knowledge tree is the right shape for a later cross document question, and only together with the vocabulary you already have, because a tree without that query is the expensive incomplete option in published runs of that pattern.
 
-Cognee stays a benchmark candidate, not the core. The accuracy and cost change Sarvam reports comes from a tree plus a queryable ontology, not from a memory engine. Sarvam lists shared agent memory as their next step, which is the slot Cognee would fill, and they have not built that yet. LightRAG is the other retrieval benchmark if the invoice vocabulary cannot express the question. Graphiti waits until a fact must be reconstructed as of a date.
+Cognee stays a benchmark candidate, not the core. The accuracy and cost change in those runs comes from a tree plus a queryable ontology, not from a memory engine. Shared agent memory is a later step, which is the slot Cognee would fill, and that step is not this fabric. LightRAG is the other retrieval benchmark if the invoice vocabulary cannot express the question. Graphiti waits until a fact must be reconstructed as of a date.
 
 ## Frontier document products
 
 These products do not send every page to one model. Each one splits the work.
 
-Sarvam Vision 2.1 (24 Sep 2026) calls the page reader a harness around a vision language model. A semantic layout parser finds regions. A reading order network decides the sequence. The vision model then reads the regions. The model can read a whole page, and they still use the harness because the accuracy trade off is worse without it. Public docs do not give downloadable weights for that vision model, so it is an architecture to copy, not a file to drop in. On the OmniDocBench v1.6 table in that post, PaddleOCR-VL 1.6 scores 96.01 and Sarvam Vision 2.1 scores 94.97. Classic OCR APIs score far lower on that table because they do not emit tables and formulas the same way. That table is not evidence that those APIs fail at invoices.
+One published document harness puts a semantic layout parser and a reading order network in front of a vision language model. The model can read a whole page, and the harness is still used because the accuracy trade off is worse without it. Public weights for that vision model are not offered as a file to drop in. PaddleOCR-VL 1.6 reports 96.33 on OmniDocBench v1.6 on its own model card. Classic OCR APIs score far lower on structural tables that also score tables and formulas, because they do not emit those the same way. That gap is not evidence that those APIs fail at invoices.
 
 Google Document AI keeps three processors. Form Parser returns generic fields, tables, and checkboxes, and it cannot be trained further. Layout Parser turns a file into structure and chunks. The newer layout versions call a Gemini model for that layout step, not as the whole product. Custom Extractor takes a schema you define. Google's own guidance is to start with the foundation model and to fine tune only after labeled examples exist.
 
@@ -90,17 +90,17 @@ Amazon Textract returns words, forms, tables, signatures, and boxes. Amazon's ow
 
 LandingAI Agentic Document Extraction is the closest product shape to this console. Parse returns reading order markdown, a block tree, and a normalized box on each block. Extract fills a schema from that markdown. Ground joins each field back to the page and the box. They warn that markdown alone cannot highlight the source, and that parsing the file again invalidates the old ranges.
 
-## Sarvam knowledge fabric
+## Knowledge tree and ontology
 
-The knowledge fabric post (26 Oct 2026) is a second architecture. It is for questions across a corpus. It does not replace the page harness. They compile documents once into two layers.
+A published knowledge fabric is a second architecture. It is for questions across a corpus. It does not replace the page harness. Documents are compiled once into two layers.
 
-The first layer is a knowledge tree, and it needs no domain model. Vision 2.1 parses each file. A long document becomes a folder with a one page index: title, summary, and each section with its page range. An agent lists folders, reads the index, opens a page range, and inspects a table. A citation points at the passage, the image, or the table row. On their own runs, navigation beat flat hybrid search. The gain was largest when the answer needed several documents or a table. The tree did not solve completeness. On one Harvey LAB request the tree found 7 of 14 qualifying offerings and added 3 false positives. Exploring the tree also cost more than plain retrieval: 3.79 million tokens and 59.2 tool calls per task, against 1.80 million tokens and 36.5 calls for agentic retrieval.
+The first layer is a knowledge tree, and it needs no domain model. A document parser reads each file. A long document becomes a folder with a one page index: title, summary, and each section with its page range. An agent lists folders, reads the index, opens a page range, and inspects a table. A citation points at the passage, the image, or the table row. On their own runs, navigation beat flat hybrid search. The gain was largest when the answer needed several documents or a table. The tree did not solve completeness. On one Harvey LAB request the tree found 7 of 14 qualifying offerings and added 3 false positives. Exploring the tree also cost more than plain retrieval: 3.79 million tokens and 59.2 tool calls per task, against 1.80 million tokens and 36.5 calls for agentic retrieval.
 
-The second layer is a domain ontology. Types, properties, and links are compiled ahead of time, then filtered and joined like a database. On that same request the ontology returned 14 of 14 qualifying offerings and added no false positives. Across Harvey LAB, with GLM 5.3 as the agent model, they report rubric criteria met rising from 55.1 percent (agentic retrieval) to 74.4 percent (tree) to 84.2 percent (ontology plus tree). The last setup used 0.86 million tokens, 14.2 tool calls, and 0.28 dollars per task. They also report that this beat a published Harvey harness figure of 79.1 percent for one frontier model and 71.7 percent for another. On Sierra tau-knowledge, with GLM 5.2, they report the same accuracy as the baseline with 64 percent fewer tokens. These figures are Sarvam's own report, not an independent audit.
+The second layer is a domain ontology. Types, properties, and links are compiled ahead of time, then filtered and joined like a database. On that same request the ontology returned 14 of 14 qualifying offerings and added no false positives. Across Harvey LAB, with GLM 5.3 as the agent model, they report rubric criteria met rising from 55.1 percent (agentic retrieval) to 74.4 percent (tree) to 84.2 percent (ontology plus tree). The last setup used 0.86 million tokens, 14.2 tool calls, and 0.28 dollars per task. They also report that this beat a published Harvey harness figure of 79.1 percent for one frontier model and 71.7 percent for another. On Sierra tau-knowledge, with GLM 5.2, they report the same accuracy as the baseline with 64 percent fewer tokens. These figures are that vendor's own report, not an independent audit.
 
 People stay in the loop. Agents may draft the types, the glossary, and the value lists. A person reviews them. Uncertain extractions and proposed fixes go to review. Changes are versioned, and the domain's evaluation set runs before an update goes live. A live database stays queried at the source, so access control does not move into the fabric. They say the fabric can run in a small air gapped setup on smaller models. Shared agent memory is the step they name next. It is not something this fabric already is.
 
-The Cowork knowledge base docs are the thin product surface of that idea. You upload policies, contracts, and similar files, and a connected agent searches and cites them. The page does not describe a tree, an ontology, or a rule check. That is the passage search the research post says cannot tell an agent whether it found everything.
+A hosted knowledge base is the thin product surface of that idea. You upload policies, contracts, and similar files, and a connected agent searches and cites them. That surface does not describe a tree, an ontology, or a rule check. That is the passage search that cannot tell an agent whether it found everything.
 
 For this console, the invoice rules are the ontology layer, scoped to one document today. The committed fixture results are the evaluation set a later rule change must pass. The knowledge tree is the layer to record for later, not to build now.
 
@@ -146,9 +146,6 @@ Chat sources:
 - dots.ocr repository: https://github.com/rednote-hilab/dots.ocr
 - LightOnOCR-2-1B model card: https://huggingface.co/lightonai/LightOnOCR-2-1B
 - Qwen2.5-VL-3B-Instruct model card: https://huggingface.co/Qwen/Qwen2.5-VL-3B-Instruct
-- Sarvam Vision 2.1: https://www.sarvam.ai/blogs/sarvam-vision-2-1
-- Sarvam knowledge fabric: https://www.sarvam.ai/blogs/knowledge-fabric-enterprise-agents
-- Sarvam Cowork knowledge bases: https://docs.sarvam.ai/cowork/build/knowledge-bases
 - Harvey LAB firm knowledge: https://www.harvey.ai/blog/legal-agent-bench-law-firm-knowledge
 - Harvey LAB tasks: https://github.com/harveyai/harvey-labs/tree/main/tasks/firm-knowledge
 - Sierra tau knowledge: https://sierra.ai/blog/tau-knowledge
