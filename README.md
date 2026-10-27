@@ -60,6 +60,10 @@ Upload (chunked, resumable)
 - Full design decisions live in [`docs/specs/`](docs/specs/); the living plan is in
   [`docs/scope/scope.md`](docs/scope/scope.md).
 
+## Architecture next slice:
+
+<img width="688" height="675" alt="image" src="https://github.com/user-attachments/assets/5754d8fc-93a7-41f8-8004-f78fd7323a17" />
+
 ### Job lifecycle & statuses (aligned to document AI)
 
 `queued → processing → (completed | partially_completed | failed | rejected)`
