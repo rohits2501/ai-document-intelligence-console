@@ -6,6 +6,19 @@ An operator console for **long-running document AI jobs**. Drop a document, watc
 progress live, then review, edit, and approve the extracted fields over a large, virtualized
 document viewer.
 
+<img width="1440" height="377" alt="image" src="https://github.com/user-attachments/assets/82db86b1-4ad0-4816-8ba9-f56873f66c8b" />
+
+<img width="1158" height="443" alt="image" src="https://github.com/user-attachments/assets/8eb4743c-6f30-47bd-bb17-d20b39182ac2" />
+
+<img width="955" height="680" alt="image" src="https://github.com/user-attachments/assets/7dfc31fb-808b-49cf-953b-d7560b5d2905" />
+
+<img width="894" height="728" alt="image" src="https://github.com/user-attachments/assets/40fecca6-288b-413a-9b05-6b083b04ba8a" />
+
+<img width="808" height="409" alt="image" src="https://github.com/user-attachments/assets/b2d6e1b3-2af9-4d1c-b65f-9abba43120ee" />
+
+<img width="1096" height="332" alt="image" src="https://github.com/user-attachments/assets/6e3e5598-a2d7-43b1-9e2d-6a093ab07553" />
+
+
 Extraction is pluggable. The default provider is a mock, and the UI says so.
 
 ## Why this project
