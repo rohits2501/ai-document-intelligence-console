@@ -259,9 +259,7 @@ function Diag({ label, value }: { label: string; value: string }) {
   return (
     <>
       <dt style={{ color: "var(--text-muted)" }}>{label}</dt>
-      <dd style={{ margin: 0, wordBreak: "break-all", fontFamily: "var(--font-mono)" }}>
-        {value}
-      </dd>
+      <dd style={{ margin: 0, wordBreak: "break-all", fontFamily: "var(--font-mono)" }}>{value}</dd>
     </>
   );
 }
