@@ -54,6 +54,15 @@ Type: `--font-sans` (system stack), `--text-xs..2xl`.
    Do not add drop shadows except `var(--shadow)` on floating chrome (walkthrough, tour pill).
 8. **Motion.** Transitions stay under ~200ms; honor `prefers-reduced-motion` for looping motion
    (walkthrough pulse already does).
+9. **Labels are sentence case in the body face.** Panel headers, field keys, and review group
+   labels are plain text, never tracked capitals or small caps. No `text-transform: uppercase` or
+   `letter-spacing` on a label.
+10. **No capability pills on working surfaces.** A panel does not badge itself with its
+    implementation ("Resumable", "Live SSE", "Virtualized", "Observability"). The behavior speaks;
+    the header only names the content. (Walkthrough step badges are tour copy, not surface chrome.)
+11. **State is words, not decorative glyphs.** Connection and job state read as words
+    ("Live" / "Reconnecting"), never a bare `●`/`○`. No arrow glued to link text (`Back`, not
+    `← Back`). `StatusBadge`'s dot is allowed because it is paired with a text label (rule 3).
 
 ## Components (`src/ui/`)
 

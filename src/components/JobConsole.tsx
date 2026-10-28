@@ -90,38 +90,35 @@ export function JobConsole({ jobId }: { jobId: string }) {
 
   return (
     <div style={{ display: "grid", gap: "var(--space-4)" }}>
-      <div
-        data-tour="job-status"
-        style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}
-      >
-        <div style={{ display: "flex", gap: "var(--space-3)", alignItems: "center" }}>
-          <Link href="/" style={{ textDecoration: "none" }}>
-            ← Back
-          </Link>
-          <h1 style={{ margin: 0, fontSize: "var(--font-size-lg)" }}>Job {jobId}</h1>
-          <StatusBadge status={state.status} />
-          <span
-            style={{
-              fontSize: "var(--font-size-xs)",
-              color: connected ? "var(--success)" : "var(--text-muted)",
-            }}
-          >
-            {connected ? "● live" : "○ reconnecting"}
-          </span>
+      <div data-tour="job-status" style={{ display: "grid", gap: "var(--space-3)" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", gap: "var(--space-3)", alignItems: "center" }}>
+            <Link href="/" style={{ textDecoration: "none" }}>
+              Back
+            </Link>
+            <h1 style={{ margin: 0, fontSize: "var(--font-size-lg)" }}>Job {jobId}</h1>
+            <StatusBadge status={state.status} />
+            <span
+              style={{
+                fontSize: "var(--font-size-xs)",
+                color: connected ? "var(--success)" : "var(--text-muted)",
+              }}
+            >
+              {connected ? "Live" : "Reconnecting"}
+            </span>
+          </div>
+          <div style={{ display: "flex", gap: "var(--space-2)", alignItems: "center" }}>
+            <ThemeToggle />
+            <Button variant="danger" disabled={acting || terminal} onClick={cancel}>
+              Cancel
+            </Button>
+            <Button disabled={acting || !terminal} onClick={retry}>
+              Retry
+            </Button>
+          </div>
         </div>
-        <div style={{ display: "flex", gap: "var(--space-2)", alignItems: "center" }}>
-          <ThemeToggle />
-          <Button variant="danger" disabled={acting || terminal} onClick={cancel}>
-            Cancel
-          </Button>
-          <Button disabled={acting || !terminal} onClick={retry}>
-            Retry
-          </Button>
-        </div>
-      </div>
 
-      <Panel title="Progress" tourId="job-progress" badge="Live SSE">
-        <div style={{ display: "grid", gap: "var(--space-2)" }}>
+        <div data-tour="job-progress" style={{ display: "grid", gap: "var(--space-2)" }}>
           <ProgressBar value={state.pagesProcessed} max={total || 1} />
           <div style={{ fontSize: "var(--font-size-sm)", color: "var(--text-muted)" }}>
             {total > 0
@@ -134,7 +131,7 @@ export function JobConsole({ jobId }: { jobId: string }) {
             </div>
           )}
         </div>
-      </Panel>
+      </div>
 
       <div
         style={{
@@ -143,7 +140,7 @@ export function JobConsole({ jobId }: { jobId: string }) {
           gap: "var(--space-4)",
         }}
       >
-        <Panel title="Document" tourId="document-viewer" badge="Virtualized">
+        <Panel title="Document" tourId="document-viewer">
           {documentId ? (
             <ErrorBoundary label="The document viewer">
               <DocumentViewer
@@ -160,11 +157,7 @@ export function JobConsole({ jobId }: { jobId: string }) {
           )}
         </Panel>
 
-        <Panel
-          title={`Review fields (${state.fields.length})`}
-          tourId="review-list"
-          badge="Human review"
-        >
+        <Panel title={`Review fields (${state.fields.length})`} tourId="review-list">
           <ReviewList
             jobId={jobId}
             fields={state.fields}
@@ -187,7 +180,7 @@ export function JobConsole({ jobId }: { jobId: string }) {
       </div>
 
       {flags.inferenceLab ? (
-        <Panel title="Inference lab" badge="Rule checked">
+        <Panel title="Inference lab">
           <ErrorBoundary label="The inference lab">
             <InferencePanel
               jobId={jobId}
@@ -236,7 +229,7 @@ export function JobConsole({ jobId }: { jobId: string }) {
         </Panel>
 
         {flags.diagnostics ? (
-          <Panel title="Diagnostics" tourId="diagnostics-panel" badge="Observability">
+          <Panel title="Diagnostics" tourId="diagnostics-panel">
             <dl
               style={{
                 margin: 0,
@@ -266,9 +259,7 @@ function Diag({ label, value }: { label: string; value: string }) {
   return (
     <>
       <dt style={{ color: "var(--text-muted)" }}>{label}</dt>
-      <dd style={{ margin: 0, wordBreak: "break-all", fontFamily: "ui-monospace, monospace" }}>
-        {value}
-      </dd>
+      <dd style={{ margin: 0, wordBreak: "break-all", fontFamily: "var(--font-mono)" }}>{value}</dd>
     </>
   );
 }

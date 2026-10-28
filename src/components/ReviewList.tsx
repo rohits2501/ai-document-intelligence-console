@@ -184,9 +184,8 @@ export function ReviewList({
                     width: "100%",
                     transform: `translateY(${item.start}px)`,
                     fontSize: "var(--font-size-xs)",
-                    color: "var(--text-muted)",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.04em",
+                    fontWeight: 600,
+                    color: "var(--text)",
                     padding: "var(--space-1) 0",
                   }}
                 >
@@ -234,7 +233,7 @@ export function ReviewList({
                   background: "var(--bg-subtle)",
                 }}
               >
-                <div style={{ display: "grid", gap: 4, minWidth: 0 }}>
+                <div style={{ display: "grid", gap: "var(--space-1)", minWidth: 0 }}>
                   <div
                     style={{
                       display: "flex",
@@ -244,12 +243,11 @@ export function ReviewList({
                       minWidth: 0,
                       fontSize: "var(--font-size-xs)",
                       color: "var(--text-muted)",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.03em",
                     }}
                   >
-                    <span>
-                      {r.key} <span style={{ color }}>· {Math.round(r.confidence * 100)}%</span>
+                    <span>{r.key}</span>
+                    <span style={{ color, fontWeight: 600 }}>
+                      {Math.round(r.confidence * 100)}%
                     </span>
                     <SourceChip
                       page={src?.page}

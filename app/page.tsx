@@ -29,8 +29,7 @@ export default function HomePage() {
           </div>
         </div>
         <p style={{ color: "var(--text-muted)", margin: 0 }}>
-          Upload a document, watch a long running job stream its progress, then review and approve
-          the extracted fields. Default extraction is a mock provider, so no keys are required.
+          Upload a document, watch the job stream, then review and approve the extracted fields.
           {flags.perfHud ? (
             <>
               {" "}
