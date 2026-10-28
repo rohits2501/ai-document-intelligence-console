@@ -75,7 +75,7 @@ export function JobList() {
   }, [mounted, jobs.length]);
 
   return (
-    <Panel title="Recent jobs" tourId="job-list" badge="Live">
+    <Panel title="Recent jobs" tourId="job-list">
       {phase === "loading" ? (
         <p role="status" style={{ color: "var(--text-muted)", margin: 0 }}>
           Loading jobs…
@@ -150,7 +150,7 @@ export function JobList() {
                         href={`/jobs/${job.id}`}
                         style={{
                           display: "flex",
-                          justifyContent: "space-between",
+                          justifyContent: "center",
                           alignItems: "center",
                           gap: "var(--space-3)",
                           padding: "var(--space-3)",

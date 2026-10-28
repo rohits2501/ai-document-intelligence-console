@@ -79,8 +79,6 @@
   border-radius: 999px;
   font-size: var(--font-size-xs);
   font-weight: 600;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
   color: var(--accent);
   background: var(--accent-subtle);
   border: 1px solid var(--accent);
